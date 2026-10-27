@@ -1,0 +1,526 @@
+{
+  "studio": "C:\\AI-Workflow-Auto",
+  "job_id": "20261026-133228-f4e0044f",
+  "prepared_views": [
+    "front",
+    "left",
+    "back",
+    "top"
+  ],
+  "versions": {
+    "7a77ef08d2664a74": [
+      "current_progress_version",
+      "current_state_version",
+      "latest_alignment_result"
+    ],
+    "3ff0519b82f641d3": [
+      "latest_texture_master"
+    ]
+  },
+  "missing_optional": [
+    "job/CURRENT_FAILURE_REPORT.txt",
+    "job/description.txt"
+  ],
+  "warnings": [],
+  "bambu": {
+    "native_project_config_present": true,
+    "archive_members": 15,
+    "bytes": 28842
+  },
+  "model_only": false,
+  "rough_input_bytes": 117504071,
+  "tool": "AI Studio validation bundle v1",
+  "created": "2026-10-26 17:32:17",
+  "read_only_collection": true,
+  "source_files_modified": false,
+  "files": [
+    {
+      "path": "code/app.py",
+      "bytes": 38419,
+      "sha256": "b99c3b22c7c142b37d70745e8a317b464c0ceeaf11c51e38f2479b79398c0b09"
+    },
+    {
+      "path": "code/failure_report.py",
+      "bytes": 9109,
+      "sha256": "385b82c12048af13bc1f81b6752e16a618a31d035051c58947fb1c5510e1788a"
+    },
+    {
+      "path": "code/current_failure_focus.py",
+      "bytes": 3850,
+      "sha256": "584c1bac9bf958935d7a1f94babc4454478b38d218db687ff085dff6536be4f6"
+    },
+    {
+      "path": "code/status_json_support.py",
+      "bytes": 1874,
+      "sha256": "86a5bbba300f334095bc556fe8d921b42d2282d1f061aafa8f96a57321118e89"
+    },
+    {
+      "path": "code/hunyuan_blender.py",
+      "bytes": 16677,
+      "sha256": "d103d2e97213bc2a0d7a85f968a1713b4bcd24e7944148918432d02b94b416c5"
+    },
+    {
+      "path": "code/hunyuan_bridge.py",
+      "bytes": 30740,
+      "sha256": "ddb383ee490fa8a26d8fed8749bdcbffd43b40b7f0001ad5c17cbd9b851ba95a"
+    },
+    {
+      "path": "code/hunyuan_autoroute.py",
+      "bytes": 22473,
+      "sha256": "219838aa2ae8251edef8263cff2e7d4a2fc47dd5fb2dcee1b8a84bc1d9ec2d3c"
+    },
+    {
+      "path": "code/hunyuan_autoroute_ui.js",
+      "bytes": 19695,
+      "sha256": "7f30948da3b207606c3fe7293b2cc8d2a4e2b072dec1f11f0f86a7c52ed3729b"
+    },
+    {
+      "path": "code/hunyuan_color.py",
+      "bytes": 30782,
+      "sha256": "883ca0784e0495ac89698617b269070de01e294d9da53db5852b50c73af4c7ee"
+    },
+    {
+      "path": "code/reference_alignment.py",
+      "bytes": 8363,
+      "sha256": "daa2c7e58cd0dd44b836f9ae334b878cf78eb93d90f9d5946c475dc64521b457"
+    },
+    {
+      "path": "code/hunyuan_color_bridge.py",
+      "bytes": 20936,
+      "sha256": "44e935ca058ba46c52f1bdabb411d44295b3642b8367ec95a7e7129cbbc31d8b"
+    },
+    {
+      "path": "code/hunyuan_color_ui.js",
+      "bytes": 12121,
+      "sha256": "d79c55c8b0433d91c817e817fd184b8313d0db6ffb8580cfc4662717c8875b3c"
+    },
+    {
+      "path": "code/hunyuan_portal_ui.js",
+      "bytes": 48448,
+      "sha256": "1fddcb82fecf8bf1d3b434077b00150791610eadaff1f04a60830628effb89ee"
+    },
+    {
+      "path": "code/job_cancel.py",
+      "bytes": 9739,
+      "sha256": "4360398e443bdad7a0f42fdae7ffca87908ec6226d3ab9863d44c0ff8a63c134"
+    },
+    {
+      "path": "code/job_cancel_ui.js",
+      "bytes": 2618,
+      "sha256": "eb75649ce0a03f3a9cfb1f0dcbf623acee3bb2f7b43b16ee67a57c8b0f4aa26a"
+    },
+    {
+      "path": "code/ai_service_manager.py",
+      "bytes": 10269,
+      "sha256": "192679057287feb4edcb33b3b7d809f25c657b36953a8e0f41fd97e9caa5fc7b"
+    },
+    {
+      "path": "code/studio_launcher.pyw",
+      "bytes": 13348,
+      "sha256": "f35bf15caac66d25a542682c88d94c9602000fa91c26a1f73e48e95a26ff8d52"
+    },
+    {
+      "path": "code/start_ai_studio.py",
+      "bytes": 1001,
+      "sha256": "341135246a5fe42ff583675923927c8a3c98dcd6d26f0f9e76810d1b4c353525"
+    },
+    {
+      "path": "code/start_hunyuan_portal.py",
+      "bytes": 1912,
+      "sha256": "4287882f8c98027225079c6eb77c24909bf9538aac444f7d83e594006ef6bdd7"
+    },
+    {
+      "path": "code/optional_worker_router.py",
+      "bytes": 6030,
+      "sha256": "3470478bd98ea10c6d452093ee4f38a8e383f8c3e69a1bf20266784be5ebb583"
+    },
+    {
+      "path": "job/request.json",
+      "bytes": 197,
+      "sha256": "be942c23c178d70ba504ab1b05205cc50c9a436b46b68ba7a01d53878b82b9d2"
+    },
+    {
+      "path": "job/hunyuan_progress.json",
+      "bytes": 2906,
+      "sha256": "9a75f8388d4a99611de5bdd0a1a181562c93adb0fd90aaedc7350ae56f8896c4"
+    },
+    {
+      "path": "job/reference_color_state_v2.json",
+      "bytes": 1334,
+      "sha256": "ca5b93bd169f54b14775cf78cfe09f15052394a2dce32f31270743fd7327b863"
+    },
+    {
+      "path": "job/status.json",
+      "bytes": 10587,
+      "sha256": "43ffcd8949a6b838ac927dcbeb403f8eff98fc3d98fa5048c11e95336548027a"
+    },
+    {
+      "path": "job/autoroute_analysis.json",
+      "bytes": 2679,
+      "sha256": "7f60192aa4031982d1a46166463b8cb9544a77705a18d36b7252505023653b5f"
+    },
+    {
+      "path": "job/error.txt",
+      "bytes": 1278,
+      "sha256": "83f89b1d66ba9a0416df6e106b50be2548f9322fe54de84a3fe7daeedc48cd3a"
+    },
+    {
+      "path": "job/reference.jpg",
+      "bytes": 1120766,
+      "sha256": "20c33ec37556cf773fb12fe995ed7c7964191d9fce53c29ab3c0d0a194f85ed0"
+    },
+    {
+      "path": "job/final/model.blend",
+      "bytes": 5665520,
+      "sha256": "1be5dda720a1301a2a91c3e0055ea8ee449f509db52b2d71f1abc8fc78ea460f"
+    },
+    {
+      "path": "job/final/model.glb",
+      "bytes": 19767208,
+      "sha256": "8355c8a0a38040ba531eda39b7e573c52b43e54991f311e42b0181785925af43"
+    },
+    {
+      "path": "job/final/model.3mf",
+      "bytes": 5118550,
+      "sha256": "e1465fb80895e39239e6300ca20d2cf0e60606ef24469d9c5fd145f36cae5838"
+    },
+    {
+      "path": "job/final/checks.json",
+      "bytes": 2538,
+      "sha256": "1ee16eac472cb3019a1ef217174f397dddd0cfbfcc65573bb9c3b452da6c4df6"
+    },
+    {
+      "path": "job/final/hunyuan_job.json",
+      "bytes": 5605,
+      "sha256": "c48f793124a08635735d7619446aded234017f5d55ece4a00e0a7c47fd19a6f2"
+    },
+    {
+      "path": "job/final/blender.log",
+      "bytes": 1374,
+      "sha256": "bbe65ac4cf780ddadf2201f4d949725bf281b9443af287cebb406c2dec64d934"
+    },
+    {
+      "path": "job/final/preview.png",
+      "bytes": 435651,
+      "sha256": "4464fc43ddf45a043d0117315c53037325e7a0ae7b55362333a86a4145cad49a"
+    },
+    {
+      "path": "job/final/preview_side.png",
+      "bytes": 406993,
+      "sha256": "23c44634e7e2fd385df6635c67b5e99abf991d24fc49d6376ec3e76b4491d579"
+    },
+    {
+      "path": "job/final/preview_top.png",
+      "bytes": 421213,
+      "sha256": "2b90d5b6a5a85aed1db393df2fc1feebe0197c918321274b257bf87e893b5871"
+    },
+    {
+      "path": "job/autoroute_prepared/front.png",
+      "bytes": 254827,
+      "sha256": "086c443424f510b6d8f16947f518415aab62505b27526c5bfb721d613ca87631"
+    },
+    {
+      "path": "job/autoroute_inputs/front.png",
+      "bytes": 487327,
+      "sha256": "e5523f813ea611046fa596cbbc3268e15ba3fd5bb83df7c053c065d0aae898a7"
+    },
+    {
+      "path": "job/autoroute_prepared/left.png",
+      "bytes": 210950,
+      "sha256": "0241eb1140b708686df282567fd3350886a26f6cb4f7171907eadea57cef670e"
+    },
+    {
+      "path": "job/autoroute_inputs/left.png",
+      "bytes": 498099,
+      "sha256": "118b72f47c8186812930f290d0b7dfcbba874fe4c8438c92c10eaab4b30cde55"
+    },
+    {
+      "path": "job/autoroute_prepared/back.png",
+      "bytes": 216008,
+      "sha256": "7c261f1f237641874cfd28f29bd7873201e1fc3795d9d88c58e6092e5e28e3b9"
+    },
+    {
+      "path": "job/autoroute_inputs/back.png",
+      "bytes": 503133,
+      "sha256": "e4672dae47d7208b061dc688d2782d67f2cc470180be5ea19b348d47454b2993"
+    },
+    {
+      "path": "job/autoroute_prepared/top.png",
+      "bytes": 184159,
+      "sha256": "ad49b9a048973f40acb46c10dd0356f5b3a3ebca02422db2d33fd07ff8eafc90"
+    },
+    {
+      "path": "job/autoroute_inputs/top.png",
+      "bytes": 575821,
+      "sha256": "06d3ae5168d03c1fbf36cbb3022d4b9720700dcc2b67b7ff074ca40328ef1a20"
+    },
+    {
+      "path": "job/prepared.png",
+      "bytes": 254827,
+      "sha256": "086c443424f510b6d8f16947f518415aab62505b27526c5bfb721d613ca87631"
+    },
+    {
+      "path": "job/attempt_01/source.glb",
+      "bytes": 2290200,
+      "sha256": "159d08e13b2ed2edea8d653c8398bbbdfc67c39c462ead363b68684b621817d4"
+    },
+    {
+      "path": "job/attempt_01/mesh_processing.json",
+      "bytes": 165,
+      "sha256": "57b2b9e39ef7f0b0e875e32b071ef4581180d8a7491f71085661c5706c4819c2"
+    },
+    {
+      "path": "job/attempt_01/checks.json",
+      "bytes": 2538,
+      "sha256": "1ee16eac472cb3019a1ef217174f397dddd0cfbfcc65573bb9c3b452da6c4df6"
+    },
+    {
+      "path": "job/attempt_01/blender.log",
+      "bytes": 1374,
+      "sha256": "bbe65ac4cf780ddadf2201f4d949725bf281b9443af287cebb406c2dec64d934"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/settings.json",
+      "bytes": 1236,
+      "sha256": "4e71a7d135190e556f0300b7a39413ee137ffa55f0cbd4c7f5e4d6de6abc7ab5"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_review.json",
+      "bytes": 4514,
+      "sha256": "df34359bec538fb51c537db6c0a6d20ad68c64fcb63a8ba3b67501734f6f4960"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_masks.npz",
+      "bytes": 20814,
+      "sha256": "68ab732dd9bb0e762fbba6346c4227f75e03ccc3b185545df3e55c1c3546c69d"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/alignment.json",
+      "bytes": 1894,
+      "sha256": "6d471b8440059d271099f7a9f04ccd18508241946fca08aa3a37b87a0fb78bba"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/checks.json",
+      "bytes": 7002,
+      "sha256": "d74d7f6e890b211f2cd0cb7391e9e05d28294117fd89973db8fde97cbdbc9c5b"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/color.log",
+      "bytes": 3153,
+      "sha256": "7a43fb2329c6d7339f291e683bb3efe023629f82069596d8c5d85842779f2654"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/model-colored.blend",
+      "bytes": 7505465,
+      "sha256": "40c35be5573773ecdd8987c5f94ce33017485148fac2568bfa092ce18ff8101e"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/model-colored.glb",
+      "bytes": 25497284,
+      "sha256": "c75d26a34dfa773cc7cb86e4cebf51ee9acaf979cab8ac0c63214276a2539146"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/preview.png",
+      "bytes": 138042,
+      "sha256": "5d9f6b4c7bf8d7fd31cc92399c9625fedeb05f592de81fad0b071e4f2063fd2f"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/preview_side.png",
+      "bytes": 116262,
+      "sha256": "77e879592454d72d8b9edb34da5e3ed576396b6194ef1deda8bf0b6dc77c8b29"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/preview_top.png",
+      "bytes": 130203,
+      "sha256": "e13c3f6bead943bcce4d463a54423a4fe125a051d68fb0a5fcb9abf12f290977"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_front.png",
+      "bytes": 254827,
+      "sha256": "086c443424f510b6d8f16947f518415aab62505b27526c5bfb721d613ca87631"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/mask_front.png",
+      "bytes": 30407,
+      "sha256": "02f850a420c8913491a2992a2fd06241bb51af54f1d63b3fece56db4420103ec"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/overlay_front.png",
+      "bytes": 265068,
+      "sha256": "f3d18b0a6343c0e610032c946646ac30a7940608a5c6cc053b2fd34904c14871"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_left.png",
+      "bytes": 210950,
+      "sha256": "0241eb1140b708686df282567fd3350886a26f6cb4f7171907eadea57cef670e"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/mask_left.png",
+      "bytes": 27587,
+      "sha256": "bdaca00f79fe1890fa6a1b889c76bafa92807e4af8496a6e02533b76ea0b49d6"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/overlay_left.png",
+      "bytes": 224148,
+      "sha256": "91cb5a1c0e2b3a6df9bafb27b484ef8ce6ad7e907a082fa40e404002ffea30ae"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_back.png",
+      "bytes": 216008,
+      "sha256": "7c261f1f237641874cfd28f29bd7873201e1fc3795d9d88c58e6092e5e28e3b9"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/mask_back.png",
+      "bytes": 27183,
+      "sha256": "6d9c9b447f392958762a99cbe8efaff32d2ef0448035af98b6016fe9d39a57f5"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/overlay_back.png",
+      "bytes": 230412,
+      "sha256": "f078a21ca62d690d03adf3908e9a2d15486ac3577b7920ca927541b170938409"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/reference_top.png",
+      "bytes": 184159,
+      "sha256": "ad49b9a048973f40acb46c10dd0356f5b3a3ebca02422db2d33fd07ff8eafc90"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/mask_top.png",
+      "bytes": 27210,
+      "sha256": "97e4cea033df602a00e9e5614e9addc9e75c91459add9c52726a2b4fd4ea1790"
+    },
+    {
+      "path": "job/color_versions/7a77ef08d2664a74/overlay_top.png",
+      "bytes": 198825,
+      "sha256": "d8356b4bb05e41d5f8aee3991ae6307038f0d46c6b4fc26d90e973131e7fbb77"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/settings.json",
+      "bytes": 1306,
+      "sha256": "4dc1becd814476fb4d08553c3deffa6039dc456089bbddc0af4fb3c9291358df"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_review.json",
+      "bytes": 4514,
+      "sha256": "df34359bec538fb51c537db6c0a6d20ad68c64fcb63a8ba3b67501734f6f4960"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_masks.npz",
+      "bytes": 20814,
+      "sha256": "68ab732dd9bb0e762fbba6346c4227f75e03ccc3b185545df3e55c1c3546c69d"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/checks.json",
+      "bytes": 4626,
+      "sha256": "268de6a2f8fd7e18caaa724f3f6fa97eda7a567e2d53a69c4826e648620e0e57"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/color.log",
+      "bytes": 257,
+      "sha256": "6ea698ca73516fd32d3b06679edae05b051d60088de0606d3d1eaa2f2e20726d"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/model-colored.blend",
+      "bytes": 7258487,
+      "sha256": "859257a0e8ad5f4ac808de838064222ddfa387bd86f09d3d4776095c9ea78e2f"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/model-colored.glb",
+      "bytes": 25605792,
+      "sha256": "56113b18faa5a3ff843ccb427152b0b7698b6a5467b1a3f5e383c87b91dfefcd"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/model-colored.3mf",
+      "bytes": 7890814,
+      "sha256": "0d65d1c440e9040bb887075ca5cdabd58b3dcd38c380978c10181ed9432572c5"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/preview.png",
+      "bytes": 246660,
+      "sha256": "206b1a0f8ce04334c5d32c0a159bfe4909c64986f1358378a84a45a231fc9d74"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/preview_side.png",
+      "bytes": 229384,
+      "sha256": "e8e905da2c1b576a95efcff0bcd2da352140444256a25a7491dde18aea45ddb5"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/preview_top.png",
+      "bytes": 240907,
+      "sha256": "6df153e039ac0c4d46ad32509b67b22f12d6fd8532d16236a3d8cd1dbba97086"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_front.png",
+      "bytes": 254827,
+      "sha256": "086c443424f510b6d8f16947f518415aab62505b27526c5bfb721d613ca87631"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/mask_front.png",
+      "bytes": 30407,
+      "sha256": "02f850a420c8913491a2992a2fd06241bb51af54f1d63b3fece56db4420103ec"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/overlay_front.png",
+      "bytes": 265068,
+      "sha256": "f3d18b0a6343c0e610032c946646ac30a7940608a5c6cc053b2fd34904c14871"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_left.png",
+      "bytes": 210950,
+      "sha256": "0241eb1140b708686df282567fd3350886a26f6cb4f7171907eadea57cef670e"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/mask_left.png",
+      "bytes": 27587,
+      "sha256": "bdaca00f79fe1890fa6a1b889c76bafa92807e4af8496a6e02533b76ea0b49d6"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/overlay_left.png",
+      "bytes": 224148,
+      "sha256": "91cb5a1c0e2b3a6df9bafb27b484ef8ce6ad7e907a082fa40e404002ffea30ae"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_back.png",
+      "bytes": 216008,
+      "sha256": "7c261f1f237641874cfd28f29bd7873201e1fc3795d9d88c58e6092e5e28e3b9"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/mask_back.png",
+      "bytes": 27183,
+      "sha256": "6d9c9b447f392958762a99cbe8efaff32d2ef0448035af98b6016fe9d39a57f5"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/overlay_back.png",
+      "bytes": 230412,
+      "sha256": "f078a21ca62d690d03adf3908e9a2d15486ac3577b7920ca927541b170938409"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/reference_top.png",
+      "bytes": 184159,
+      "sha256": "ad49b9a048973f40acb46c10dd0356f5b3a3ebca02422db2d33fd07ff8eafc90"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/mask_top.png",
+      "bytes": 27210,
+      "sha256": "97e4cea033df602a00e9e5614e9addc9e75c91459add9c52726a2b4fd4ea1790"
+    },
+    {
+      "path": "job/color_versions/3ff0519b82f641d3/overlay_top.png",
+      "bytes": 198825,
+      "sha256": "d8356b4bb05e41d5f8aee3991ae6307038f0d46c6b4fc26d90e973131e7fbb77"
+    },
+    {
+      "path": "bambu/reference-project.3mf",
+      "bytes": 28842,
+      "sha256": "5bbb677e1dd9a440a6a91b6f2bb8736b82a562ad150754e518768444c326e5a7"
+    }
+  ],
+  "excluded": [
+    "credentials/access-token files",
+    "config.json and service/Studio/Hunyuan settings",
+    "model weights",
+    "unrelated jobs",
+    "backup folders"
+  ],
+  "privacy": "Contains selected design images, model data, code, logs and local paths. Source/logs are not redacted; review before sharing. Nothing uploaded automatically."
+}

@@ -1,0 +1,265 @@
+{
+  "request": {
+    "instructions": "",
+    "parent_job": "",
+    "engine": "hunyuan",
+    "length_mm": 120.0,
+    "quality": "standard",
+    "image_file": "reference.jpg",
+    "retry_of": "20261025-170620-accf3cd0"
+  },
+  "processing": {
+    "stage": "export",
+    "candidate": 1,
+    "quality": "standard",
+    "seed": 990414131370839,
+    "transform": {
+      "length_mm": 120.0,
+      "rotate_x": 0,
+      "rotate_y": 0,
+      "rotate_z": 0,
+      "allow_mesh_warnings": false,
+      "repair_voxel_mm": 0.4
+    },
+    "autoroute_review_panels": [
+      {
+        "view": "unknown",
+        "bbox": [
+          0,
+          0,
+          1,
+          1
+        ],
+        "description": "Original image \u2014 choose a subject crop if needed."
+      }
+    ],
+    "autoroute_suggestion": "single",
+    "autoroute": {
+      "route": "mv",
+      "panels": [
+        {
+          "view": "front",
+          "bbox": [
+            0.0,
+            0.0,
+            0.4984848854758523,
+            0.5019490862057014
+          ],
+          "conditioning": true,
+          "role": "geometry_view"
+        },
+        {
+          "view": "left",
+          "bbox": [
+            0.5015151145241478,
+            0.0,
+            1.0,
+            0.49652549016647973
+          ],
+          "conditioning": true,
+          "role": "geometry_view"
+        },
+        {
+          "view": "back",
+          "bbox": [
+            0.0,
+            0.49544061206034085,
+            0.4984848854758523,
+            1.0
+          ],
+          "conditioning": true,
+          "role": "geometry_view"
+        },
+        {
+          "view": "top",
+          "bbox": [
+            0.5021212491122159,
+            0.5019490862057014,
+            1.0,
+            1.0
+          ],
+          "conditioning": false,
+          "role": "reference_only"
+        }
+      ],
+      "confirmed": true,
+      "selection": "human_confirmed",
+      "primary_view": "front"
+    },
+    "invert": false,
+    "use_original": false,
+    "goal": "likeness",
+    "result_type": "solid",
+    "notes": "",
+    "previous_review": "attempt_01\\review_versions\\20261026-140423-d325f62d",
+    "solid_repair_approved": true,
+    "original_requested_result_type": "solid"
+  },
+  "comfy_workflow": {
+    "3": {
+      "inputs": {
+        "seed": 990414131370839,
+        "steps": 20,
+        "cfg": 8,
+        "sampler_name": "euler",
+        "scheduler": "normal",
+        "denoise": 1,
+        "model": [
+          "70",
+          0
+        ],
+        "positive": [
+          "80",
+          0
+        ],
+        "negative": [
+          "80",
+          1
+        ],
+        "latent_image": [
+          "66",
+          0
+        ]
+      },
+      "class_type": "KSampler"
+    },
+    "51": {
+      "inputs": {
+        "crop": "none",
+        "clip_vision": [
+          "54",
+          1
+        ],
+        "image": [
+          "56",
+          0
+        ]
+      },
+      "class_type": "CLIPVisionEncode"
+    },
+    "54": {
+      "inputs": {
+        "ckpt_name": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+      },
+      "class_type": "ImageOnlyCheckpointLoader"
+    },
+    "56": {
+      "inputs": {
+        "image": "portal/20261026-133228-f4e0044f/prepared.png"
+      },
+      "class_type": "LoadImage"
+    },
+    "61": {
+      "inputs": {
+        "num_chunks": 8000,
+        "octree_resolution": 256,
+        "samples": [
+          "3",
+          0
+        ],
+        "vae": [
+          "54",
+          2
+        ]
+      },
+      "class_type": "VAEDecodeHunyuan3D"
+    },
+    "66": {
+      "inputs": {
+        "resolution": 3072,
+        "batch_size": 1
+      },
+      "class_type": "EmptyLatentHunyuan3Dv2"
+    },
+    "70": {
+      "inputs": {
+        "shift": 1.0000000000000002,
+        "sampling": "flow",
+        "model": [
+          "54",
+          0
+        ]
+      },
+      "class_type": "ModelSamplingAuraFlow"
+    },
+    "80": {
+      "class_type": "Hunyuan3Dv2ConditioningMultiView",
+      "inputs": {
+        "front": [
+          "51",
+          0
+        ],
+        "left": [
+          "9201",
+          0
+        ],
+        "back": [
+          "9203",
+          0
+        ]
+      }
+    },
+    "81": {
+      "inputs": {
+        "algorithm": "surface net",
+        "threshold": 0.6,
+        "voxel": [
+          "61",
+          0
+        ]
+      },
+      "class_type": "VoxelToMesh"
+    },
+    "82": {
+      "inputs": {
+        "filename_prefix": "mesh/portal/20261026-133228-f4e0044f/candidate_01",
+        "image": "",
+        "mesh": [
+          "81",
+          0
+        ]
+      },
+      "class_type": "SaveGLB"
+    },
+    "9200": {
+      "inputs": {
+        "image": "portal/20261026-133228-f4e0044f/views/left.png"
+      },
+      "class_type": "LoadImage"
+    },
+    "9201": {
+      "inputs": {
+        "crop": "none",
+        "clip_vision": [
+          "54",
+          1
+        ],
+        "image": [
+          "9200",
+          0
+        ]
+      },
+      "class_type": "CLIPVisionEncode"
+    },
+    "9202": {
+      "inputs": {
+        "image": "portal/20261026-133228-f4e0044f/views/back.png"
+      },
+      "class_type": "LoadImage"
+    },
+    "9203": {
+      "inputs": {
+        "crop": "none",
+        "clip_vision": [
+          "54",
+          1
+        ],
+        "image": [
+          "9202",
+          0
+        ]
+      },
+      "class_type": "CLIPVisionEncode"
+    }
+  }
+}

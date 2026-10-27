@@ -1,0 +1,20 @@
+00:01.844  blend            | Read blend: "C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\attempt_01\model.blend"
+Info: Collecting face colors for Orca export...
+Info: Found 1 unique colors across 1 objects
+Info: Detected 1 color zones for Orca export
+Info: Exported 1 objects to C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\attempt_01\model.3mf
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+14:04:44 | INFO: Starting glTF 2.0 export
+14:04:44 | INFO: Extracting primitive: Mesh_0.001
+14:04:45 | INFO: Primitives created: 1
+14:04:45 | INFO: Finished glTF 2.0 export in 0.35603833198547363 s
+00:06.844  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\attempt_01\preview.png'
+00:06.906  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\attempt_01\preview_side.png'
+00:06.969  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\attempt_01\preview_top.png'
+
+Info: Saved as "model.blend"
+HUNYUAN_PORTAL_MESH_PROCESSING_PASSED
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit

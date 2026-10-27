@@ -1,0 +1,81 @@
+name: Build Windows Full and Update Installer
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ai-studio-installer-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - name: Check out private build project
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Windows build Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Check real source inputs
+        run: |
+          $ErrorActionPreference = 'Stop'
+          foreach ($file in @('AI-Studio-Source-Capture.txt','installer/build_windows.py')) {
+            if (-not (Test-Path -LiteralPath $file -PathType Leaf)) {
+              throw "Missing $file. Upload the extracted Windows build project, not just its ZIP. No placeholder EXE will be created."
+            }
+          }
+
+      - name: Verify source and prepare Full and Update choices
+        run: |
+          python installer/build_windows.py prepare --capture AI-Studio-Source-Capture.txt --expected-sha256 7b5e78595601e77ff224b1c19e8d78ff7f0b24d129c3f87e74319e358c66b8d8 --default-mode full --work-dir build
+          if ($LASTEXITCODE -ne 0) { throw 'Capture verification or installer preparation failed' }
+
+      - name: Install pinned Windows packager
+        run: |
+          python -m pip install --disable-pip-version-check pyinstaller==6.22.3
+          if ($LASTEXITCODE -ne 0) { throw 'Executable packager installation failed' }
+
+      - name: Compile Windows EXE
+        run: |
+          python installer/build_windows.py compile --work-dir build --output-dir dist
+          if ($LASTEXITCODE -ne 0) { throw 'Windows compilation failed' }
+
+      - name: Test packaged program copy and update preservation
+        run: |
+          python installer/build_windows.py smoke --exe dist/AI-Modeling-Studio-Setup.exe --work-dir build --report dist/install-smoke-report.json
+          if ($LASTEXITCODE -ne 0) { throw 'Packaged program-path tests failed' }
+
+      - name: Verify artifact evidence and SHA-256
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $exe = Get-Item -LiteralPath 'dist/AI-Modeling-Studio-Setup.exe'
+          if ($exe.Length -le 0) { throw 'Empty EXE' }
+          $report = Get-Content -LiteralPath 'dist/install-smoke-report.json' -Raw | ConvertFrom-Json
+          if ($report.capture_sha256 -ne '7b5e78595601e77ff224b1c19e8d78ff7f0b24d129c3f87e74319e358c66b8d8') { throw 'Wrong source capture' }
+          if ($report.full_program_copy_passed -ne $true -or $report.update_preservation_passed -ne $true) { throw 'Both program installation paths must pass' }
+          $hash = Get-FileHash -LiteralPath $exe.FullName -Algorithm SHA256
+          ($hash.Hash.ToLowerInvariant() + '  ' + $exe.Name) | Set-Content -LiteralPath 'dist/SHA256SUMS.txt' -Encoding ascii
+          'Program-path smoke tests do not certify prerequisite downloads, GPU models, reconstruction fidelity, or Bambu color export.' | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload installer checksum and test report
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-Modeling-Studio-Windows-Installer
+          path: |
+            dist/AI-Modeling-Studio-Setup.exe
+            dist/SHA256SUMS.txt
+            dist/install-smoke-report.json
+          if-no-files-found: error
+          retention-days: 7
