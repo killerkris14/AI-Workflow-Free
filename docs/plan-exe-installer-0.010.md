@@ -17,3 +17,8 @@ Created only when missing (config.json, hunyuan_settings.json, studio_settings.j
 ## Verification done (cloud)
 Payload hashes match installed files; engine parse OK; Linux pwsh runs: dry run, failure paths (blocked downloads -> FAIL_REASON + dependent steps skipped), twice-apply (2nd run 0 changes), Full keeps settings and backs up replaced files (keep 2). exe extracted with 7z, payload verified.
 NOT VERIFIED: any run on Windows; download URLs (cloud blocked); pymanager --force, Blender extension CLI, winget pins.
+
+## Windows run 1 (GAMING-2026, 2026-10-27 21:17, setup build -2, Smart)
+All requirements detected/verified (models SHA-256 ok, 21 checks + Blender self-test passed, 0 program files changed). Two false results:
+NVIDIA "NOT FOUND" and Bambu "winget exit -1978335189" (0x8A15002B = no applicable update). Root cause: 32-bit NSIS stub (PE machine 0x14c)
+launched $SYSDIR powershell -> SysWOW64 32-bit PowerShell. Fixed in setup build 2026-10-28-3 (Sysnative launch + 64-bit relaunch guard + winget code handling).

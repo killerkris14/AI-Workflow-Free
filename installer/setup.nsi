@@ -14,7 +14,7 @@ Name "AI Modeling Studio 0.010"
 OutFile "${OUTDIR}\AI-Modeling-Studio-0.010-Setup.exe"
 InstallDir "C:\AI-Workflow-Auto"
 RequestExecutionLevel user
-BrandingText "AI Modeling Studio 0.010 (build 2026-10-28-2)"
+BrandingText "AI Modeling Studio 0.010 (setup build 2026-10-28-3)"
 VIProductVersion "0.10.0.0"
 VIAddVersionKey "ProductName" "AI Modeling Studio"
 VIAddVersionKey "FileVersion" "0.010"
@@ -131,7 +131,12 @@ Section "Install"
   File "payload_manifest.json"
   DetailPrint "Mode: $Mode   Models: $Models   Components:$Comps $DryArg"
   DetailPrint "The setup engine runs in its own window and shows a report with a Copy all button when it finishes."
-  ExecWait '"$SYSDIR\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -ExecutionPolicy Bypass -STA -File "$PLUGINSDIR\payload\engine.ps1" -Mode $Mode -Models $Models -InstallDir "$INSTDIR" -Components "$Comps" -Payload "$PLUGINSDIR\payload" $DryArg' $0
+  ; 64-bit PowerShell: this setup .exe is 32-bit, so $SYSDIR would be redirected to SysWOW64 (32-bit PowerShell).
+  StrCpy $1 "$WINDIR\Sysnative\WindowsPowerShell\v1.0\powershell.exe"
+  IfFileExists "$1" +2 0
+    StrCpy $1 "$SYSDIR\WindowsPowerShell\v1.0\powershell.exe"
+  DetailPrint "PowerShell: $1"
+  ExecWait '"$1" -NoProfile -ExecutionPolicy Bypass -STA -File "$PLUGINSDIR\payload\engine.ps1" -Mode $Mode -Models $Models -InstallDir "$INSTDIR" -Components "$Comps" -Payload "$PLUGINSDIR\payload" $DryArg' $0
   ${If} $0 == 0
     DetailPrint "Setup engine finished: everything OK."
   ${Else}

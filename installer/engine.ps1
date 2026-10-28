@@ -11,7 +11,19 @@ param(
 # Smart = check every requirement and install only what is missing or wrong (delta).
 # Full  = re-install every requirement. Jobs, source images, models and user settings are never deleted.
 $ErrorActionPreference = 'Stop'
-$VERSION = '0.010'; $BUILD = '2026-10-28-2'
+$VERSION = '0.010'; $BUILD = '2026-10-28-2'; $SETUP_BUILD = '2026-10-28-3'
+
+# 64-bit guard (setup 2026-10-28-3): a 32-bit PowerShell on 64-bit Windows sees SysWOW64 instead of System32
+# (no nvidia-smi), the 32-bit registry view (64-bit programs such as Bambu Studio look missing) and
+# Program Files (x86). Relaunch this script in the 64-bit PowerShell with the same arguments.
+if ([Environment]::Is64BitOperatingSystem -and -not [Environment]::Is64BitProcess -and $env:OS -eq 'Windows_NT') {
+    $ps64 = Join-Path $env:WINDIR 'Sysnative\WindowsPowerShell\v1.0\powershell.exe'
+    if (-not (Test-Path $ps64)) { Write-Host ('STOP: this installer must run in 64-bit PowerShell and ' + $ps64 + ' was not found. Nothing was changed.') -ForegroundColor Red; exit 3 }
+    $relaunch = @('-NoProfile', '-ExecutionPolicy', 'Bypass', '-STA', '-File', $PSCommandPath, '-Mode', $Mode, '-Models', $Models, '-InstallDir', $InstallDir, '-Components', $(if ($Components) { $Components } else { ',' }), '-Payload', $Payload)
+    if ($DryRun) { $relaunch += '-DryRun' }; if ($NoWindow) { $relaunch += '-NoWindow' }
+    & $ps64 @relaunch
+    exit $LASTEXITCODE
+}
 $Stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $Script:Log = New-Object System.Collections.Generic.List[string]
 $Script:Results = New-Object System.Collections.Generic.List[object]
@@ -118,6 +130,7 @@ $EmbPy = Join-Path $ComfyBase 'python_embeded\python.exe'
 $HFHub = Join-Path $env:USERPROFILE '.cache\huggingface\hub'
 
 Say ('=== AI Modeling Studio ' + $VERSION + ' installer  -  ' + $Mode.ToUpper() + ' install  -  models: ' + $Models + ' ===') 'Cyan'
+Say ('Setup build ' + $SETUP_BUILD + '   PowerShell ' + $PSVersionTable.PSVersion + ' ' + $(if ([Environment]::Is64BitProcess) { '64-bit' } else { '32-bit' }))
 Say ('Started ' + (Get-Date -Format s) + ' on ' + $env:COMPUTERNAME + $(if ($DryRun) { '   (DRY RUN: nothing is changed)' } else { '' }))
 Say ('Studio folder: ' + $InstallDir); Say ('ComfyUI: ' + $ComfyBase); Say ('llama.cpp: ' + $LlamaDir); Say ('Blender: ' + $BlenderExe)
 Say ('Optional components: ' + (($Want.Keys | Sort-Object) -join ', '))
@@ -333,15 +346,24 @@ Step 'Desktop shortcut' @('AI Modeling Studio 0.010 program files', 'Python 3.15
 # ---------------------------------------------------------------- 7. optional: Bambu Studio, AnythingLLM skill
 if ($Want['bambu']) {
     Step 'Bambu Studio 02.08.02.61' @() {
-        $e = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -eq 'Bambu Studio' } | Select-Object -First 1
+        $e = Get-ItemProperty 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*', 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*' -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like 'Bambu Studio*' } | Select-Object -First 1
         if ($e -and $e.DisplayVersion -eq $PIN.BambuVersion -and $Mode -eq 'Smart') { return 'already installed ' + $e.DisplayVersion }
+        if ($e -and $Mode -eq 'Smart') { return ('already installed ' + $e.DisplayVersion + ' (pinned ' + $PIN.BambuVersion + '; existing version kept, not changed)') }
         if ($DryRun) { return 'DRY: winget install Bambulab.Bambustudio' }
+        # winget codes that mean "it is already there": 0x8A15002B no applicable update, 0x8A150061 already installed
+        $already = @(-1978335189, -1978335135)
         $wargs = @('install', '-e', '--id', 'Bambulab.Bambustudio', '--version', $PIN.BambuVersion, '--accept-package-agreements', '--accept-source-agreements', '--silent')
         if ($Mode -eq 'Full') { $wargs += '--force' }
-        & winget @wargs
-        if ($LASTEXITCODE) { Say '    pinned version not available in winget - installing the current winget version' 'Yellow'; & winget install -e --id Bambulab.Bambustudio --accept-package-agreements --accept-source-agreements --silent $(if ($Mode -eq 'Full') { '--force' }) }
-        if ($LASTEXITCODE -and -not $e) { throw ('winget exit ' + $LASTEXITCODE) }
-        return 'installed'
+        & winget @wargs; $c1 = $LASTEXITCODE
+        if ($c1 -in $already) { return ('already installed (winget exit ' + $c1 + ': already installed / no applicable update)') }
+        if ($c1) {
+            Say ('    pinned version install returned winget exit ' + $c1 + ' - trying the current winget version') 'Yellow'
+            & winget install -e --id Bambulab.Bambustudio --accept-package-agreements --accept-source-agreements --silent $(if ($Mode -eq 'Full') { '--force' }); $c2 = $LASTEXITCODE
+            if ($c2 -in $already) { return ('already installed (winget exit ' + $c2 + ': already installed / no applicable update)') }
+            if ($c2) { throw ('winget exit ' + $c1 + ' (pinned ' + $PIN.BambuVersion + ') then ' + $c2 + ' (current version)') }
+            return 'installed current winget version (pinned ' + $PIN.BambuVersion + ' not available)'
+        }
+        return 'installed ' + $PIN.BambuVersion
     }
 }
 if ($Want['anythingllm']) {

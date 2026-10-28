@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.010 Windows .exe installer (setup build 2026-10-28-3)
+- Fix: the setup engine ran in 32-bit PowerShell (the .exe is 32-bit, so System32 was redirected to SysWOW64).
+  Result on GAMING-2026: false "NVIDIA driver NOT FOUND" (nvidia-smi is 64-bit only) and a false Bambu Studio failure
+  (64-bit uninstall entry invisible; winget then returned 0x8A15002B "no applicable update", i.e. already installed).
+- setup.nsi now starts %WINDIR%\Sysnative PowerShell (64-bit); engine.ps1 relaunches itself in 64-bit PowerShell if started 32-bit,
+  and prints the PowerShell bitness in the report header.
+- Bambu Studio: also checks per-user installs; winget 0x8A15002B / 0x8A150061 are reported as already installed;
+  Smart keeps an existing different Bambu version instead of reinstalling it.
+- Program files unchanged (still 0.010 build 2026-10-28-2).
+
 ## 0.010 Windows .exe installer (build 2026-10-28-2)
 - NSIS + PowerShell installer: Smart (install only missing/wrong), Full (force reinstall), Check only.
 - Models: verify SHA-256 or always re-download. Optional: llama.cpp + Qwen, Bambu Studio, AnythingLLM skill.
