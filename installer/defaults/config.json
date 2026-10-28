@@ -1,0 +1,17 @@
+{
+    "blender_exe":  "__BLENDER_EXE__",
+    "api_url":  "http://127.0.0.1:8080/v1/chat/completions",
+    "addon_module":  "bl_ext.blender_org.ThreeMF_io",
+    "max_attempts":  3,
+    "model_timeout_seconds":  3600,
+    "blender_timeout_seconds":  900,
+    "allow_generated_code_execution":  false,
+    "export_settings":  {
+                            "use_selection":  true,
+                            "global_scale":  1.0,
+                            "use_mesh_modifiers":  true
+                        },
+    "preview_size":  900,
+    "vision_model":  "vision",
+    "coding_model":  "coder"
+}

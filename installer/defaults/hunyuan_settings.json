@@ -1,0 +1,6 @@
+{
+  "comfy_root": "__COMFY_ROOT__",
+  "comfy_url": "http://127.0.0.1:8188",
+  "timeout_seconds": 3600,
+  "release_comfy_models": true
+}

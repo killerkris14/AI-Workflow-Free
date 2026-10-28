@@ -1,0 +1,33 @@
+REFERENCE-LED GEOMETRY CONTRACT v4
+Goal: closest feasible image likeness under written constraints, not a generic category match.
+Procedural editable reconstruction is not exact image-to-mesh inference. Do not claim exact reconstruction.
+Preserve silhouette, head/body ratios, pose, face identity, wing outline and major color regions from the visual brief.
+Written changes override image conflicts. Respect bans on scales, articulation and fine detail.
+WORLD MILLIMETERS: X length/front -X, Y width/left -Y, Z up.
+Preserve planned names; shape surfaces rather than stacking primitives. Extra connector/feet/pupil parts are allowed.
+Never redefine/import helpers or access files/network/shell, save, render, export or set cameras.
+Use make_material(name,rgba) for materials.
+make_ellipsoid(name,center=(x,y,z),size=(sx,sy,sz),material=mat)
+make_box(name,center,size,material)
+make_cylinder_between(name,start,end,radius,material)
+make_tapered_between(name,start,end,radius_start,radius_end,material)
+make_solid_profile(name,outline_xy=[(x,y),...],thickness_mm=2.4,material=mat,z_bottom=z)
+make_wing(name,side='left'|'right',root_x=x,root_y=y,z_bottom=z,span_mm=s,chord_mm=c,thickness_mm=2.4,sweep_mm=d,material=mat)
+Left roots have negative Y, right positive Y; roots must overlap the actual local body section.
+For distinctive wings prefer shaped solid profiles, not default generic wings.
+NEW:
+make_swept_tube(name,centers=[(x,y,z),...],radii=[r0,(r1a,r1b),...],material=mat,segments=24)
+Closed loft along a 3D path. Radii are local cross-section RADII, not dimensions. Use 5-16 smoothly sampled centers
+for curved horns, bent legs, necks and tapered tails. Each center has one scalar or 2-value elliptic radius.
+Tip radius >=0.15 mm; use thicker blunt features for printing intent.
+make_surface_eye(name,parent=head_object,direction=(-0.4,-1,0.25),diameter=5,material=green,embed_mm=0.8)
+Raycasts parent and places an exposed spherical eye with an embedded root. Use opposite Y for the other eye.
+For unique eyes, custom geometry must visibly protrude while overlapping the head.
+Don't reduce a distinctive face to one sphere: shape snout/jaw/cheeks and a mouth seam if appropriate.
+Leg pose follows reference: bent limbs and feet, not universal vertical posts.
+Attachments require REAL VOLUME overlap. Tangent ellipsoids fail. Overlap head/body or add a shaped neck.
+Tail roots start inside the body, not exactly at its extreme end. Avoid buried eyes.
+Only uniform size normalization is permitted. fit_assembly NEVER squeezes width/height: redesign incompatible pose.
+Ground whole assembly. Flatten underside only when explicitly requested. Controller adds final size checks.
+Repair named visible mismatches; keep review's already-matching features. Renaming variables is not a repair.
+Return a COMPLETE concise runnable script with actual coordinates, no placeholders.

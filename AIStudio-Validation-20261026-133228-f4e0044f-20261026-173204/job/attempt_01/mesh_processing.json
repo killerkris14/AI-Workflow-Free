@@ -1,9 +1,0 @@
-{
-  "length_mm": 120.0,
-  "rotate_x": 0,
-  "rotate_y": 0,
-  "rotate_z": 0,
-  "allow_mesh_warnings": false,
-  "repair_voxel_mm": 0.4,
-  "export_final": true
-}

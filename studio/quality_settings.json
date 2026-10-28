@@ -1,0 +1,6 @@
+{
+  "length_tolerance_fraction": 0.03,
+  "bed_tolerance_mm": 0.15,
+  "require_closed_parts": true,
+  "review_preview_size": 512
+}

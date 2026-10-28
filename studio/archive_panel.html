@@ -1,0 +1,84 @@
+<!-- Web Archive Patch v1 -->
+<section id="wa-panel" style="margin:18px;padding:18px;border:1px solid #718096;border-radius:10px;background:#182334;color:#eef4ff;font:14px system-ui,sans-serif">
+<h2 style="margin:0 0 8px">Job archive</h2>
+<p>Archive finished jobs to clear them from the active list. Files are moved, not deleted. Restore a successful job before using it as a revision parent. Wait until all jobs finish before moving jobs.</p>
+<button type="button" id="wa-refresh">Refresh archive controls</button>
+<button type="button" id="wa-all">Archive all finished jobs</button>
+<span id="wa-message" role="status" style="display:block;margin:10px 0;white-space:pre-wrap"></span>
+<details open><summary>Finished jobs available to archive</summary><div id="wa-active"></div></details>
+<details><summary>Archived jobs (restore here)</summary><div id="wa-archived"></div></details>
+</section>
+<script>
+(() => {
+  if (window.__workflowArchiveLoaded) return;
+  window.__workflowArchiveLoaded = true;
+  const key = __ARCHIVE_TOKEN_JSON__;
+  const terminal = new Set(['SUCCEEDED', 'FAILED', 'INTERRUPTED']);
+  const $ = id => document.getElementById(id);
+  let busy = false;
+  let active = [];
+  const message = text => { $('wa-message').textContent = text; };
+  async function request(route, payload) {
+    const options = {headers: {'X-Workflow-Key': key}, cache: 'no-store'};
+    if (payload) {
+      options.method = 'POST';
+      options.headers['Content-Type'] = 'application/json';
+      options.body = JSON.stringify(payload);
+    }
+    const response = await fetch(route, options);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || ('HTTP ' + response.status));
+    return data;
+  }
+  function rows(container, jobs, restore) {
+    container.replaceChildren();
+    if (!jobs.length) { container.textContent = 'No jobs in this section.'; return; }
+    for (const job of jobs) {
+      const row = document.createElement('div');
+      row.style.cssText = 'padding:10px 0;border-bottom:1px solid #526078;display:flex;gap:12px;align-items:center';
+      const label = document.createElement('span');
+      label.style.cssText = 'flex:1;overflow-wrap:anywhere';
+      label.textContent = job.id + ' | ' + job.state + ' | ' + (job.instructions || '').slice(0, 130);
+      const button = document.createElement('button');
+      button.type = 'button'; button.textContent = restore ? 'Restore' : 'Archive';
+      button.onclick = () => moveOne(job.id, restore);
+      row.append(label, button); container.append(row);
+    }
+  }
+  async function refresh() {
+    const [jobs, archived] = await Promise.all([request('/jobs'), request('/archived')]);
+    active = jobs;
+    rows($('wa-active'), jobs.filter(job => terminal.has(job.state)), false);
+    rows($('wa-archived'), archived, true);
+  }
+  async function moveOne(id, restore) {
+    if (busy) return;
+    if (!confirm((restore ? 'Restore' : 'Archive') + ' job ' + id + '?\nNo files will be deleted.')) return;
+    busy = true;
+    try {
+      await request(restore ? '/restore' : '/archive', {id});
+      await refresh();
+      message((restore ? 'Restored ' : 'Archived ') + id + '. Refresh the page if the original job list has not updated.');
+    } catch (error) { message(error.message); }
+    finally { busy = false; }
+  }
+  $('wa-refresh').onclick = () => { refresh().then(() => message('Archive controls refreshed.')).catch(error => message(error.message)); };
+  $('wa-all').onclick = async () => {
+    if (busy) return;
+    try { await refresh(); } catch (error) { message(error.message); return; }
+    
+    const ids = active.filter(job => terminal.has(job.state)).map(job => job.id);
+    if (!ids.length) { message('No finished jobs to archive.'); return; }
+    if (!confirm('Archive all ' + ids.length + ' finished jobs?\nTheir files are kept in Archived-Jobs.')) return;
+    busy = true;
+    let moved = 0;
+    try {
+      for (const id of ids) { await request('/archive', {id}); moved++; }
+      await refresh();
+      message('Archived ' + moved + ' jobs. Refresh the page if the original list has not updated.');
+    } catch (error) { message('Archived ' + moved + ' jobs before stopping: ' + error.message); await refresh().catch(() => {}); }
+    finally { busy = false; }
+  };
+  refresh().catch(error => message(error.message));
+})();
+</script>

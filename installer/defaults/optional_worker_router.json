@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "server": "__LLAMA_DIR__\\llama-server.exe",
+  "server_args": [
+    "--models-preset",
+    "__MODELS_INI__",
+    "--models-max",
+    "1",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "8080"
+  ],
+  "cwd": "__LLAMA_DIR__",
+  "saved_endpoint": "127.0.0.1:50052"
+}

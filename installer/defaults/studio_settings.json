@@ -1,0 +1,10 @@
+{
+  "two_pc": false,
+  "worker_ip": "",
+  "worker_rpc_port": 50052,
+  "worker_control_port": 50053,
+  "worker_key": "",
+  "comfy_dir": "__COMFY_DIR__",
+  "llama_dir": "__LLAMA_DIR__",
+  "installed": "__STAMP__"
+}

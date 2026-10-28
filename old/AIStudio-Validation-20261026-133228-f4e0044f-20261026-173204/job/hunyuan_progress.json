@@ -1,0 +1,133 @@
+{
+  "stage": "color_approval",
+  "candidate": 1,
+  "quality": "standard",
+  "seed": 990414131370839,
+  "transform": {
+    "length_mm": 120.0,
+    "rotate_x": 0,
+    "rotate_y": 0,
+    "rotate_z": 0,
+    "allow_mesh_warnings": false,
+    "repair_voxel_mm": 0.4
+  },
+  "autoroute_review_panels": [
+    {
+      "view": "unknown",
+      "bbox": [
+        0,
+        0,
+        1,
+        1
+      ],
+      "description": "Original image \u2014 choose a subject crop if needed."
+    }
+  ],
+  "autoroute_suggestion": "single",
+  "autoroute": {
+    "route": "mv",
+    "panels": [
+      {
+        "view": "front",
+        "bbox": [
+          0.0,
+          0.0,
+          0.4984848854758523,
+          0.5019490862057014
+        ],
+        "conditioning": true,
+        "role": "geometry_view"
+      },
+      {
+        "view": "left",
+        "bbox": [
+          0.5015151145241478,
+          0.0,
+          1.0,
+          0.49652549016647973
+        ],
+        "conditioning": true,
+        "role": "geometry_view"
+      },
+      {
+        "view": "back",
+        "bbox": [
+          0.0,
+          0.49544061206034085,
+          0.4984848854758523,
+          1.0
+        ],
+        "conditioning": true,
+        "role": "geometry_view"
+      },
+      {
+        "view": "top",
+        "bbox": [
+          0.5021212491122159,
+          0.5019490862057014,
+          1.0,
+          1.0
+        ],
+        "conditioning": false,
+        "role": "reference_only"
+      }
+    ],
+    "confirmed": true,
+    "selection": "human_confirmed",
+    "primary_view": "front"
+  },
+  "invert": false,
+  "use_original": false,
+  "goal": "likeness",
+  "result_type": "solid",
+  "notes": "",
+  "previous_review": "attempt_01\\review_versions\\20261026-140423-d325f62d",
+  "solid_repair_approved": true,
+  "original_requested_result_type": "solid",
+  "color_protocol": 2,
+  "color_version": "7a77ef08d2664a74",
+  "color_settings": {
+    "views": {
+      "front": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "front"
+      },
+      "left": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "left"
+      },
+      "back": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "back"
+      },
+      "top": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "top"
+      }
+    }
+  }
+}

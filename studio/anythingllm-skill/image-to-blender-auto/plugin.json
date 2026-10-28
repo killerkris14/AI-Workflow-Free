@@ -1,0 +1,41 @@
+{
+  "active": true,
+  "hubId": "image-to-blender-auto",
+  "name": "Image to Blender Auto",
+  "schema": "skill-1.0.0",
+  "version": "1.0.0",
+  "description": "Queue image-to-Blender generation with automatic execution, limited repair attempts, 3MF export and preview; revise a successful job; or read workflow status. Job completion is asynchronous.",
+  "setup_args": {},
+  "examples": [
+    {
+      "prompt": "Generate a model from C:\\AI-Workflow-Auto\\Input\\reference.png, 100 mm tall.",
+      "call": "{\"action\": \"start\", \"image_path\": \"C:\\\\AI-Workflow-Auto\\\\Input\\\\reference.png\", \"instructions\": \"Make a 100 mm tall model.\", \"parent_job\": \"\"}"
+    },
+    {
+      "prompt": "Check the workflow jobs.",
+      "call": "{\"action\": \"status\", \"image_path\": \"\", \"instructions\": \"\", \"parent_job\": \"\"}"
+    }
+  ],
+  "entrypoint": {
+    "file": "handler.js",
+    "params": {
+      "action": {
+        "type": "string",
+        "description": "start, revise, or status"
+      },
+      "image_path": {
+        "type": "string",
+        "description": "For start: full PNG/JPEG path inside C:\\AI-Workflow-Auto\\Input. Otherwise empty."
+      },
+      "instructions": {
+        "type": "string",
+        "description": "User modeling requirements or revision request. Empty for status."
+      },
+      "parent_job": {
+        "type": "string",
+        "description": "For revise: exact ID of successful job. Otherwise empty."
+      }
+    }
+  },
+  "imported": true
+}

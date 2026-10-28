@@ -1,0 +1,7 @@
+{
+  "idle_seconds": 120,
+  "portal_idle_seconds": 600,
+  "startup_timeout_seconds": 240,
+  "router_url": "http://127.0.0.1:8080",
+  "router_launcher": "__ROUTER__"
+}

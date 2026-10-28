@@ -1,0 +1,119 @@
+{
+  "ok": true,
+  "protocol": 2,
+  "phase": "color_export_finished",
+  "method": "reference_uv_textures",
+  "palette": [],
+  "settings": {
+    "views": {
+      "front": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "front"
+      },
+      "left": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "left"
+      },
+      "back": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "back"
+      },
+      "top": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "top"
+      }
+    }
+  },
+  "statistics": {
+    "mapped_faces": 42157,
+    "fallback_faces": 122561,
+    "reference_face_counts": {
+      "front": 8497,
+      "left": 7432,
+      "back": 16911,
+      "top": 9317
+    },
+    "palette_face_counts": [],
+    "color_quantization": false,
+    "source_resampling": false,
+    "seam_blending": false
+  },
+  "objects": [
+    {
+      "name": "Mesh_0",
+      "vertices": 164732,
+      "faces": 164718,
+      "non_manifold_edges": 0,
+      "orientation_mismatch_edges": 0,
+      "degenerate_faces": 0,
+      "volume_mm3": 35149.13218151845
+    }
+  ],
+  "dimensions_mm": [
+    120.0,
+    111.59585571289062,
+    65.89212799072266
+  ],
+  "geometry_sha256": "3f4618b0b0a06d3d5ce897a6695bd37d37585cb40d8fd87672619b282392a133",
+  "source_blend_sha256": "1be5dda720a1301a2a91c3e0055ea8ee449f509db52b2d71f1abc8fc78ea460f",
+  "preview_blend_sha256": "859257a0e8ad5f4ac808de838064222ddfa387bd86f09d3d4776095c9ea78e2f",
+  "reference_fingerprint": "3bab85143b313c0e343e173efed83e6ba67055cd20b16c46bf1b3e57cd5b92ca",
+  "configuration_fingerprint": "35ffffb19ad972894066fb89c74b9e9f3f16d40e74bddfd9c9e058e869bf832b",
+  "artifacts": {
+    "reference_front.png": "086c443424f510b6d8f16947f518415aab62505b27526c5bfb721d613ca87631",
+    "mask_front.png": "02f850a420c8913491a2992a2fd06241bb51af54f1d63b3fece56db4420103ec",
+    "overlay_front.png": "f3d18b0a6343c0e610032c946646ac30a7940608a5c6cc053b2fd34904c14871",
+    "reference_left.png": "0241eb1140b708686df282567fd3350886a26f6cb4f7171907eadea57cef670e",
+    "mask_left.png": "bdaca00f79fe1890fa6a1b889c76bafa92807e4af8496a6e02533b76ea0b49d6",
+    "overlay_left.png": "91cb5a1c0e2b3a6df9bafb27b484ef8ce6ad7e907a082fa40e404002ffea30ae",
+    "reference_back.png": "7c261f1f237641874cfd28f29bd7873201e1fc3795d9d88c58e6092e5e28e3b9",
+    "mask_back.png": "6d9c9b447f392958762a99cbe8efaff32d2ef0448035af98b6016fe9d39a57f5",
+    "overlay_back.png": "f078a21ca62d690d03adf3908e9a2d15486ac3577b7920ca927541b170938409",
+    "reference_top.png": "ad49b9a048973f40acb46c10dd0356f5b3a3ebca02422db2d33fd07ff8eafc90",
+    "mask_top.png": "97e4cea033df602a00e9e5614e9addc9e75c91459add9c52726a2b4fd4ea1790",
+    "overlay_top.png": "d8356b4bb05e41d5f8aee3991ae6307038f0d46c6b4fc26d90e973131e7fbb77",
+    "reference_masks.npz": "68ab732dd9bb0e762fbba6346c4227f75e03ccc3b185545df3e55c1c3546c69d",
+    "model-colored.blend": "859257a0e8ad5f4ac808de838064222ddfa387bd86f09d3d4776095c9ea78e2f",
+    "model-colored.glb": "56113b18faa5a3ff843ccb427152b0b7698b6a5467b1a3f5e383c87b91dfefcd",
+    "preview.png": "206b1a0f8ce04334c5d32c0a159bfe4909c64986f1358378a84a45a231fc9d74",
+    "preview_side.png": "e8e905da2c1b576a95efcff0bcd2da352140444256a25a7491dde18aea45ddb5",
+    "preview_top.png": "6df153e039ac0c4d46ad32509b67b22f12d6fd8532d16236a3d8cd1dbba97086"
+  },
+  "warnings": [
+    "Manual registration and all-view review are required.",
+    "Visibility is sampled per polygon; partial occlusion and seams can remain. No seam blending.",
+    "Unobserved areas remain neutral, not generated detail.",
+    "Preview lighting can alter apparent brightness; source PNG bytes are unchanged.",
+    "Texture master is not a verified Bambu/AMS filament-mapped project. No printability or articulation certification."
+  ],
+  "preview_fingerprint": "43a1e7e2e3b9eb535b89b48dee34f036a0a2c1130cb786fd76204d7169ee5516",
+  "export_sha256": "0d65d1c440e9040bb887075ca5cdabd58b3dcd38c380978c10181ed9432572c5",
+  "export": {
+    "filament_mapped": false,
+    "bambu_validated": false
+  }
+}

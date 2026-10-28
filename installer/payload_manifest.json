@@ -1,0 +1,298 @@
+{
+ "version": "0.010",
+ "build": "2026-10-28-2",
+ "files": [
+  {
+   "name": "Analyze-Photo-To-Text.bat",
+   "sha256": "1e34b1b7100a669895154c1b6fb10255dbc9e92856e526ec8f38b451830cbf3d"
+  },
+  {
+   "name": "INSTALL.txt",
+   "sha256": "8d257de76823593a9665bbc6c4697fe00c6967a00d1bd00f12e28b2ab1bd3146"
+  },
+  {
+   "name": "Inspect-Exporter.bat",
+   "sha256": "e449bea70b86a383df7811a6055a99570c8f532a9852e09226c6eac85a52ec47"
+  },
+  {
+   "name": "README.txt",
+   "sha256": "cf1c356fd6c669981e04ea572205fe7c65d2521c49c8f6a27e744d077fb3c872"
+  },
+  {
+   "name": "Rollback-Color-Update.bat",
+   "sha256": "fa4c4790a3acacad27dd0d39398c8d93b957609c1106896d818607b824beb3df"
+  },
+  {
+   "name": "Start-AI-Studio.bat",
+   "sha256": "2d6228928a61f08b0245c29e323b2951800874fc4f7c6d20c81d032da67dde53"
+  },
+  {
+   "name": "Start-Hunyuan-Portal.bat",
+   "sha256": "2d6228928a61f08b0245c29e323b2951800874fc4f7c6d20c81d032da67dde53"
+  },
+  {
+   "name": "Start-Workflow.bat",
+   "sha256": "7220355e4e9d65f4da4bc2b58d3bd81d1937228e9b99cdb1dbecaf3dd0bbff36"
+  },
+  {
+   "name": "ai_service_manager.py",
+   "sha256": "00b60810d77943e19bbd2ff7ee90195b5b0fcdee06688701315bace18493f2e5"
+  },
+  {
+   "name": "ai_studio.ico",
+   "sha256": "bea1fa3d424a4a2d8aa6a2afe4e9e2ab2cd59b3e3206ce1582072086368c76d2"
+  },
+  {
+   "name": "alignment_evidence.py",
+   "sha256": "9d1177a3c475e70174d1817cfbf2b6dbf676bd5d8f9bf7ae9e49dbc165f879de"
+  },
+  {
+   "name": "anythingllm-skill\\image-to-blender-auto\\handler.js",
+   "sha256": "0938939cb038274f369e4c76958fe669c25d8c469e0a6510f09cc75be646e78c"
+  },
+  {
+   "name": "anythingllm-skill\\image-to-blender-auto\\plugin.json",
+   "sha256": "06e12357e18adfeb32ea7e03df175d37a7411fa852c08886329ca991d60d71b1"
+  },
+  {
+   "name": "app.py",
+   "sha256": "b99c3b22c7c142b37d70745e8a317b464c0ceeaf11c51e38f2479b79398c0b09"
+  },
+  {
+   "name": "archive_panel.html",
+   "sha256": "f15517124846a29bea09235ad5e9c3d6570f7c2d2ca596e5cad0ecb0aeeeb175"
+  },
+  {
+   "name": "autoroute_crop.py",
+   "sha256": "d8087011b19dc601d02e73535a21e128ae2fe3444e8e73686a4ffa37153c046d"
+  },
+  {
+   "name": "autoroute_multi_view.json",
+   "sha256": "714f256942748336af96c8a34eece6212d6c25fc73c8c94af7de0a4544adebd2"
+  },
+  {
+   "name": "autoroute_settings.json",
+   "sha256": "f0a38be6e9269b436a1a04de42bd448d193309addb897f36e4e71f1ece4ea729"
+  },
+  {
+   "name": "autoroute_single_view.json",
+   "sha256": "7ddbb221e553f2f9c410ca24ee8ba7a2f964c66dc34bccd6683a63087d8cefc5"
+  },
+  {
+   "name": "bambu_color_export.py",
+   "sha256": "a06768fe626321d4f0bec237cf1798b90cd0333080ae7066222eac2f319246ca"
+  },
+  {
+   "name": "bambu_template.3mf",
+   "sha256": "5bbb677e1dd9a440a6a91b6f2bb8736b82a562ad150754e518768444c326e5a7"
+  },
+  {
+   "name": "current_failure_focus.py",
+   "sha256": "584c1bac9bf958935d7a1f94babc4454478b38d218db687ff085dff6536be4f6"
+  },
+  {
+   "name": "failure_report.py",
+   "sha256": "385b82c12048af13bc1f81b6752e16a618a31d035051c58947fb1c5510e1788a"
+  },
+  {
+   "name": "failure_report_ui.js",
+   "sha256": "03b45ad85ae00edccacf0f8e4287d60168166f83e9b481a3f08165adc1691719"
+  },
+  {
+   "name": "figure_detection.py",
+   "sha256": "c76e7b071275904da2b85f0cb78d10bdc3532c3b7dbfa01d21653cfe3ffe7f43"
+  },
+  {
+   "name": "hunyuan_autoroute.py",
+   "sha256": "2b5471a9b00c4111befd9ea0df87312790454faa02432adcca589f85a722e820"
+  },
+  {
+   "name": "hunyuan_autoroute_ui.js",
+   "sha256": "7f30948da3b207606c3fe7293b2cc8d2a4e2b072dec1f11f0f86a7c52ed3729b"
+  },
+  {
+   "name": "hunyuan_blender.py",
+   "sha256": "d103d2e97213bc2a0d7a85f968a1713b4bcd24e7944148918432d02b94b416c5"
+  },
+  {
+   "name": "hunyuan_bridge.py",
+   "sha256": "24c7c0a7ad1417e68cc82cdabf53e494e87fefd34157361096db7e98e9ad7f10"
+  },
+  {
+   "name": "hunyuan_color.py",
+   "sha256": "43846871830b37b9585d7e22d935cc45c86835b0dc93dad493a37b35a37e66d0"
+  },
+  {
+   "name": "hunyuan_color_bridge.py",
+   "sha256": "b2571900d4d1451d50b74b0148e2621f4dc478b2c42b31fb9c8b6555125dcf8b"
+  },
+  {
+   "name": "hunyuan_color_ui.js",
+   "sha256": "1352f6809225ef6513e3b202ea12a582832fd2733c967ef3671c344542aec4ef"
+  },
+  {
+   "name": "hunyuan_portal_ui.js",
+   "sha256": "473c6f2f086cb5ccead6a18d0a29f42eff49733d9eec2ccc45cb1583e3a0fdd5"
+  },
+  {
+   "name": "hunyuan_workflow_api.json",
+   "sha256": "714f256942748336af96c8a34eece6212d6c25fc73c8c94af7de0a4544adebd2"
+  },
+  {
+   "name": "hunyuan_workflow_api_mv.json",
+   "sha256": "714f256942748336af96c8a34eece6212d6c25fc73c8c94af7de0a4544adebd2"
+  },
+  {
+   "name": "hunyuan_workflow_api_single_view.json",
+   "sha256": "ca633fd4d0c42b79b8a9206b18f029e1618d48009f678a17af565b2ea14db4d0"
+  },
+  {
+   "name": "image_fidelity.py",
+   "sha256": "7da808223ceeff65df46b63079b6cbb4f8f0fcb5e8d025103552c5929f816fa5"
+  },
+  {
+   "name": "job_cancel.py",
+   "sha256": "a8efda2e9ee4a92ac92222358dd0a16a1dc02c984eb63db904a39c5bdb041347"
+  },
+  {
+   "name": "job_cancel_settings.json",
+   "sha256": "75991da123112de1db9ca87d8d9cfcee81cd03bfd83d33a32c524acc38a29fa5"
+  },
+  {
+   "name": "job_cancel_ui.js",
+   "sha256": "eb75649ce0a03f3a9cfb1f0dcbf623acee3bb2f7b43b16ee67a57c8b0f4aa26a"
+  },
+  {
+   "name": "job_layout_ui.js",
+   "sha256": "cd5bade83b4909de05c5ec76dd61b447af927d83d5ab213691206e1e627ea518"
+  },
+  {
+   "name": "mask_cleanup.py",
+   "sha256": "68bff08d52e2233354df29743ee96d457bceeb310c5f5e55b4f883fd79803b61"
+  },
+  {
+   "name": "mega_dragon_settings.json",
+   "sha256": "6b6dd642272a72e8c741f1543e02b2fca307fd26451410d772e1a2cbed488f4f"
+  },
+  {
+   "name": "mega_geometry.py",
+   "sha256": "84fbeac48bc26cbe52a53711c263e65824d54dc439963bf564b00b8494c703fe"
+  },
+  {
+   "name": "mega_workflow.py",
+   "sha256": "e92cf8b52606fa60f89e5e0d02ddec8033a162e8017fd2cc60a7b4b67493a320"
+  },
+  {
+   "name": "optional_worker_router.py",
+   "sha256": "3470478bd98ea10c6d452093ee4f38a8e383f8c3e69a1bf20266784be5ebb583"
+  },
+  {
+   "name": "photo_to_text.py",
+   "sha256": "790e93703781755d60aa7fd8fe6f63975778dc338a00a5666672e2addc9c83c1"
+  },
+  {
+   "name": "prepared_cleanup.py",
+   "sha256": "45727f5e17db41aa8e155f52e66e7ba302e86edc0ee8c42b16ea3a3d6bc46c47"
+  },
+  {
+   "name": "quality_settings.json",
+   "sha256": "44e2b1d068de699899f71d5a770084c5842c1a3889d209184a4c92ea39949277"
+  },
+  {
+   "name": "quality_support.py",
+   "sha256": "6ee722fe914d872c9afae769c4385cbcfd30afd25c10b873214fd32414a7e40d"
+  },
+  {
+   "name": "reference_alignment.py",
+   "sha256": "cc6713961d0e854a9c014614c35bc38b2ca8617fedfa00a96ec7e9fa87659e50"
+  },
+  {
+   "name": "repair_feedback_support.py",
+   "sha256": "93a51a90080b377d5a8ddc7fd343a046c6dc7787982d5bdc544befd08957e537"
+  },
+  {
+   "name": "retry_ui.js",
+   "sha256": "5c41d352367a875efc0c43469cec5cf8480b678e86865e99604f9ecf7274aedc"
+  },
+  {
+   "name": "rules.txt",
+   "sha256": "7c96536fb1a562d843b61ed525127b6835a95f93710b0186d1aac88e3281f6d3"
+  },
+  {
+   "name": "runner.py",
+   "sha256": "8bac5b144780d11782ebcf38e080644f9f99cfb56d10b29c3ea7233c4fda8672"
+  },
+  {
+   "name": "selftest_color_update.py",
+   "sha256": "4ba0cc941d14da659a35bf4781da6d53dc361a5f110241515c99b3ed639b2e11"
+  },
+  {
+   "name": "service_power_ui.js",
+   "sha256": "0aa55a0ecd2feb07005bb765535d4edd48e03de8096d98170fccb24c0697e2ee"
+  },
+  {
+   "name": "smart_geometry.py",
+   "sha256": "4136ed8b7efa3bd6e2fee8880b0a33f65991790d3b3741d1045a2b74b600763a"
+  },
+  {
+   "name": "smart_geometry_rules.txt",
+   "sha256": "dc2dcf148209534eb77a5734b81cbcaf6134b8d631f323a67e951bd87c59e125"
+  },
+  {
+   "name": "start_ai_studio.py",
+   "sha256": "341135246a5fe42ff583675923927c8a3c98dcd6d26f0f9e76810d1b4c353525"
+  },
+  {
+   "name": "start_hunyuan_portal.py",
+   "sha256": "4287882f8c98027225079c6eb77c24909bf9538aac444f7d83e594006ef6bdd7"
+  },
+  {
+   "name": "status_json_support.py",
+   "sha256": "86a5bbba300f334095bc556fe8d921b42d2282d1f061aafa8f96a57321118e89"
+  },
+  {
+   "name": "studio_launcher.pyw",
+   "sha256": "f35bf15caac66d25a542682c88d94c9602000fa91c26a1f73e48e95a26ff8d52"
+  },
+  {
+   "name": "studio_release_tool.pyw",
+   "sha256": "70fd7d7d62616ea508845bb44ef9d73ef0be65952b50f16a28436e4ea9c1a02d"
+  },
+  {
+   "name": "studio_update_core.py",
+   "sha256": "8714f4c0924b4e21643d31b0a98e4bc7d6b04c127abf09f3c269e45661fe7187"
+  },
+  {
+   "name": "studio_update_launch.pyw",
+   "sha256": "ecf0174fa09d81a8efd4fd1a7639d868f65c10922971726b0df25c871ae8fae6"
+  },
+  {
+   "name": "studio_update_ui.py",
+   "sha256": "3a5169aad8b29ee659397bc2fd2832fe92c04d2f1ebc836fe5b0c3709f6a63c6"
+  },
+  {
+   "name": "test_reference_fidelity.py",
+   "sha256": "e8ca775373cb3ec090423448b763917a60c47e6a3d23ed6d145e3e1c554ba018"
+  },
+  {
+   "name": "test_smart_geometry.py",
+   "sha256": "0439e1a7c8fa0687cff9a5fa32bab291e8d0611c9c52e429cd996d0ab44accf0"
+  },
+  {
+   "name": "test_view_mirror_010.py",
+   "sha256": "d095e6bf23896786af97f398966876b1f8f71901094c7b2408592e49a1e3263c"
+  },
+  {
+   "name": "ui.html",
+   "sha256": "4165c245f9b9449093e047f545e385dbd8cc6dc76e5ed923961a987e3e0a4f7c"
+  },
+  {
+   "name": "view_consistency.py",
+   "sha256": "4828ccc4f8d4c9943e62b7185562fc913f4931799dc7994e18384f37ba0fa7ce"
+  },
+  {
+   "name": "visual_dashboard.html",
+   "sha256": "51c40a2eec092d5decccdf66cd3944666eff9ad6c4eb518a7a62e2610e59606a"
+  }
+ ]
+}

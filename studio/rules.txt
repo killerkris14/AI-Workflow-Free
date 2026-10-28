@@ -1,0 +1,14 @@
+Generate real Blender mesh geometry with bpy, not a picture or a flat textured plane.
+Use millimeter coordinates: scene.unit_settings.system = 'METRIC'; scene.unit_settings.scale_length = 0.001.
+One Blender coordinate unit represents one millimeter in this workflow.
+Use separate named mesh objects for distinct color regions and components.
+Use named materials with explicit diffuse_color values. Also set Principled BSDF Base Color where applicable.
+Keep geometry complexity moderate. Prefer robust direct mesh creation and simple primitives.
+Use object/data API where possible. Avoid context-sensitive editor operations.
+Do not install packages, use external assets, network access, shell commands, or file access.
+Do not save, export, render, load files, exit Blender, or change enabled addons. The fixed runner does those tasks.
+Do not set up a camera or lights: the fixed runner frames the generated geometry.
+Raise exceptions for failures; do not hide errors or print PASS without actual validation.
+Preserve existing parameters, proportions, colors, and geometry unless the revision asks to change them.
+Hidden features are inferred approximations; do not claim exact reconstruction.
+For a first test, keep the output simple enough for a short complete script.

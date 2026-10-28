@@ -1,0 +1,36 @@
+MATERIAL / GEOMETRY GENERATION PATCH 1
+
+Based on your supplied app-2.py and runner.py. The replacement controller is named app.py.
+
+INSTALL
+1. Wait until no job is running. Stop the workflow dashboard/controller with Ctrl+C.
+   Stop the controller, NOT the llama.cpp model server.
+2. Back up C:\AI-Workflow-Auto\app.py and runner.py to app.py.bak and runner.py.bak.
+3. Copy the two replacement files from this ZIP into C:\AI-Workflow-Auto.
+4. Leave config.json, rules.txt, the UI, Jobs, token and launchers unchanged.
+5. Restart the same dashboard launcher you normally use.
+6. Submit a NEW job. Do not revise the failed job: the existing controller requires a successful parent.
+
+WHAT CHANGED
+runner.py: supplies make_material(name, color, roughness=0.65) in generated script namespace.
+The helper explicitly creates and connects the shader and output node; sets viewport/shader colors.
+app.py: instructs model to use helper, faces/volume, mm coordinates, coherent positioning.
+Rejects two known bad patterns before running Blender: hard-coded default node name lookups,
+and literal integer arguments to BMesh edges.new. Errors feed the existing repair loop.
+For a small dragon without dimensions, the prompt introduces an assumed 120 mm length;
+explicitly specify a different length in your request if desired.
+Your existing faceless-mesh checks, queue, retry count, 3MF exporter and rendering remain intact.
+
+WHAT WAS TESTED
+Both Python files parse successfully. Targeted extraction tests confirm the two known bad patterns
+are rejected and the helper, vertex-reference edges, and from_pydata examples are accepted.
+ZIP integrity checked. Not tested in Blender or against your local model/server.
+
+LIMITATIONS
+Does not turn a weak model into a reliable articulated-dragon designer.
+Does not enforce physical size or joint quality in geometry checks.
+Does not repair the old failed model or certify printing, colors, clearance or visual similarity.
+The helper is provided by the runner; generated scripts calling it are not standalone scripts.
+Do not run generated model.py directly without defining/providing make_material.
+AST checks are guardrails, NOT a sandbox. Generated code still runs with user permissions.
+Keep the existing generated-code execution authorization and do not run as administrator.

@@ -1,0 +1,5 @@
+{
+  "single_confidence_threshold": 0.8,
+  "schema_version": 1,
+  "model_confidence_is_self_reported": true
+}

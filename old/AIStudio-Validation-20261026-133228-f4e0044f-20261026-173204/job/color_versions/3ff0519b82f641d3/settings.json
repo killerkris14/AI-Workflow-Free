@@ -1,0 +1,51 @@
+{
+  "source_blend": "C:\\AI-Workflow-Auto\\Jobs\\20261026-133228-f4e0044f\\final\\model.blend",
+  "confirm_bind_unhashed_source": false,
+  "settings": {
+    "views": {
+      "front": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "front"
+      },
+      "left": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "left"
+      },
+      "back": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "back"
+      },
+      "top": {
+        "scale": 1.0,
+        "offset_x": 0.0,
+        "offset_y": 0.0,
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0,
+        "flip": false,
+        "direction": "top"
+      }
+    }
+  },
+  "reference_approval_fingerprint": "3bab85143b313c0e343e173efed83e6ba67055cd20b16c46bf1b3e57cd5b92ca",
+  "approved_preview_fingerprint": "43a1e7e2e3b9eb535b89b48dee34f036a0a2c1130cb786fd76204d7169ee5516",
+  "accept_uncovered": true
+}

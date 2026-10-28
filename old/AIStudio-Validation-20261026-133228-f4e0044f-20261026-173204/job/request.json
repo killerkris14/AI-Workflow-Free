@@ -1,0 +1,9 @@
+{
+  "instructions": "",
+  "parent_job": "",
+  "engine": "hunyuan",
+  "length_mm": 120.0,
+  "quality": "standard",
+  "image_file": "reference.jpg",
+  "retry_of": "20261025-170620-accf3cd0"
+}

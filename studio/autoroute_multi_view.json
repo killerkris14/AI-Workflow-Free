@@ -1,0 +1,119 @@
+{
+  "3": {
+    "inputs": {
+      "seed": 990414131370839,
+      "steps": 20,
+      "cfg": 8,
+      "sampler_name": "euler",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "70",
+        0
+      ],
+      "positive": [
+        "80",
+        0
+      ],
+      "negative": [
+        "80",
+        1
+      ],
+      "latent_image": [
+        "66",
+        0
+      ]
+    },
+    "class_type": "KSampler"
+  },
+  "51": {
+    "inputs": {
+      "crop": "none",
+      "clip_vision": [
+        "54",
+        1
+      ],
+      "image": [
+        "56",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode"
+  },
+  "54": {
+    "inputs": {
+      "ckpt_name": "hunyuan3d-dit-v2-mv_fp16.safetensors"
+    },
+    "class_type": "ImageOnlyCheckpointLoader"
+  },
+  "56": {
+    "inputs": {
+      "image": "generated-image.png"
+    },
+    "class_type": "LoadImage"
+  },
+  "61": {
+    "inputs": {
+      "num_chunks": 8000,
+      "octree_resolution": 256,
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "54",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeHunyuan3D"
+  },
+  "66": {
+    "inputs": {
+      "resolution": 3072,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentHunyuan3Dv2"
+  },
+  "70": {
+    "inputs": {
+      "shift": 1.0000000000000002,
+      "sampling": "flow",
+      "model": [
+        "54",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow"
+  },
+  "80": {
+    "class_type": "Hunyuan3Dv2ConditioningMultiView",
+    "inputs": {
+      "front": [
+        "51",
+        0
+      ]
+    }
+  },
+  "81": {
+    "inputs": {
+      "algorithm": "surface net",
+      "threshold": 0.6,
+      "voxel": [
+        "61",
+        0
+      ]
+    },
+    "class_type": "VoxelToMesh"
+  },
+  "82": {
+    "inputs": {
+      "filename_prefix": "mesh/ComfyUI",
+      "image": "",
+      "mesh": [
+        "81",
+        0
+      ]
+    },
+    "class_type": "SaveGLB"
+  }
+}

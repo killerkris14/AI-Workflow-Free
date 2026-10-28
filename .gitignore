@@ -1,0 +1,16 @@
+# Never commit job data, logs, backups or large model files
+Jobs/
+Archived-Jobs/
+logs/
+backups/
+dist/
+__pycache__/
+*.pyc
+*.bak
+*.damaged-*
+access-token.txt
+*.safetensors
+*.gguf
+*.ckpt
+*.pth
+models.auto-worker-runtime-*.ini

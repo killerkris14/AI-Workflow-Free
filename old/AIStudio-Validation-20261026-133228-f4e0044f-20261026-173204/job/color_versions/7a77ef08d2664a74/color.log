@@ -1,0 +1,35 @@
+00:02.313  blend            | Read blend: "C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\final\model.blend"
+AUTO_ALIGN_VIEW front
+AUTO_ALIGN_VIEW left
+AUTO_ALIGN_VIEW back
+AUTO_ALIGN_VIEW top
+00:53.829  blend            | Read blend: "C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\final\model.blend"
+C:\AI-Workflow-Auto\hunyuan_color.py:149: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  image=bpy.data.images.load(str(folder/('reference_'+slot+'.png')),check_existing=False);image.colorspace_settings.name='sRGB';image.pack();material=bpy.data.materials.new('Reference_'+slot);material.use_nodes=True;nodes=material.node_tree.nodes;nodes.clear();texture=nodes.new('ShaderNodeTexImage');texture.image=image;texture.extension='EXTEND';shader=nodes.new('ShaderNodeBsdfPrincipled');shader.inputs['Metallic'].default_value=0;shader.inputs['Roughness'].default_value=.9;output=nodes.new('ShaderNodeOutputMaterial');material.node_tree.links.new(texture.outputs['Color'],shader.inputs['Base Color']);material.node_tree.links.new(shader.outputs['BSDF'],output.inputs['Surface']);material['reference_texture_slot']=slot
+C:\AI-Workflow-Auto\hunyuan_color.py:186: DeprecationWarning: 'Scene.use_nodes' is expected to be removed in Blender 6.0
+  old_nodes=scene.use_nodes
+C:\AI-Workflow-Auto\hunyuan_color.py:222: DeprecationWarning: 'World.use_nodes' is expected to be removed in Blender 6.0
+  world.use_nodes=True
+C:\AI-Workflow-Auto\hunyuan_color.py:200: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  result.use_nodes=True
+C:\AI-Workflow-Auto\hunyuan_color.py:208: DeprecationWarning: 'Material.use_nodes' is expected to be removed in Blender 6.0
+  if material and material.use_nodes:
+C:\AI-Workflow-Auto\hunyuan_color.py:229: DeprecationWarning: 'Scene.use_nodes' is expected to be removed in Blender 6.0
+  scene.use_nodes=False
+01:28.250  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\color_versions\7a77ef08d2664a74\preview.png'
+01:28.422  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\color_versions\7a77ef08d2664a74\preview_side.png'
+01:28.579  render           | Saved: 'C:\AI-Workflow-Auto\Jobs\20261026-133228-f4e0044f\color_versions\7a77ef08d2664a74\preview_top.png'
+C:\AI-Workflow-Auto\hunyuan_color.py:269: DeprecationWarning: 'Scene.use_nodes' is expected to be removed in Blender 6.0
+  scene.use_nodes=old_nodes
+INFO Draco is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_draco_bridge.dll
+INFO MeshOptimizer is available, use library at C:\Program Files\Blender Foundation\Blender 5.2\5.2\scripts\addons_core\io_scene_gltf2\bf_intern_meshopt_bridge.dll
+15:48:41 | INFO: Starting glTF 2.0 export
+15:48:41 | INFO: Extracting primitive: Mesh_0.001
+15:48:42 | INFO: Primitives created: 5
+15:48:42 | INFO: Finished glTF 2.0 export in 0.48561954498291016 s
+
+Info: Saved as "model-colored.blend"
+REFERENCE_TEXTURE_WORKER_PASSED
+Blender 5.2.2 LTS (hash d13f752e3b9c built 2026-09-15 01:37:04)
+
+Blender quit
