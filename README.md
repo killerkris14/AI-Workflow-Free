@@ -2,7 +2,7 @@
 
 Windows image-to-3D-print workflow: reference pictures -> background removal -> Hunyuan3D-2 multi-view mesh (ComfyUI) -> geometry check -> color transfer (Blender) -> Bambu Studio color 3MF.
 
-Current version: **0.010 (build 2026-10-28-2)**
+Current version: **0.017 (build 2026-10-30-3)** - new PC: `AI-Modeling-Studio-0.017-Setup.exe`; existing 0.016 b5 install: `updates/0.017/` (r2, b2, b3)
 
 ## Requirements (pinned)
 | Part | Version |
@@ -12,6 +12,8 @@ Current version: **0.010 (build 2026-10-28-2)**
 | Blender | 5.2.2 + ThreeMF_io extension |
 | ComfyUI portable | 0.42.1 (torch 2.14.0+cu130) |
 | Models | Hunyuan3D-2 MV + single view, BiRefNet |
+| AI paint runtime | uv 0.12.24, Python 3.12.15, torch 2.6.0+cu126, Hunyuan3D-2 paint (~19 GB) |
+| Video reader | ffmpeg 7.1 |
 | Optional | llama.cpp b11768 + Qwen2.5-VL-7B / Qwen2.5-Coder-14B, Bambu Studio, AnythingLLM skill |
 
 ## Repo layout
@@ -28,12 +30,13 @@ Current version: **0.010 (build 2026-10-28-2)**
 Not in the repo: jobs, source images, logs, backups, model files, access tokens (see `.gitignore`).
 
 ## Install
-- New PC or repair: run `AI-Modeling-Studio-0.010-Setup.exe`. Smart = install only what is missing; Full = reinstall everything (jobs, models and settings kept). Tick "Check only" first to see what it would do.
-- Existing 0.009 install: run `updates/0.010/Install-Update-0.010.bat` (checks the installed version first, backs up, self-tests, rolls back on failure).
+- New PC, repair or upgrade: run `AI-Modeling-Studio-0.017-Setup.exe`. Smart = install only what is missing; Full = reinstall everything (jobs, models and settings kept). Tick "Check only" first to see what it would do.
+- Existing install: run the update .bats for the next version in `updates/` in order (0.017: r2 -> b2 -> b3, needs 0.016 b5). Each checks the installed version first, backs up, self-tests and rolls back on failure.
+- Older Setup .exe files in the repo root (0.010) are kept for history; use the 0.017 one.
 
 ## Build the installer
-Install NSIS 3.x, then double-click `installer\Build-Installer.bat`. Output: `dist\AI-Modeling-Studio-0.010-Setup.exe`.
+Install NSIS 3.x, then double-click `installer\Build-Installer.bat`. Output: `dist\AI-Modeling-Studio-0.017-Setup.exe`.
 
 ## Notes
 - `.gitattributes` turns off line-ending conversion: installers check file SHA-256 hashes (e.g. `WORKER_SHA256` in `hunyuan_color_bridge.py`), so files must stay byte-identical.
-- `studio/` matches the installed copy on GAMING-2026 as of 2026-10-27 (hashes in `installer/payload_manifest.json`).
+- `studio/` matches the installed copy on GAMING-2026 as of 2026-10-30 (0.017 build 2026-10-30-3) (hashes in `installer/payload_manifest.json`).

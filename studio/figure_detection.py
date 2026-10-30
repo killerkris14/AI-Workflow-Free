@@ -1,4 +1,4 @@
-"""AUTO_VIEW_DETECTION_V1 (AI Modeling Studio 0.006): find the separate figures on a reference sheet and name each
+"""AUTO_VIEW_DETECTION_V1 (AI Modeling Studio 0.006) + WHITE_TIP_CROP_FIX_V1 (0.016): find the separate figures on a reference sheet and name each
 view from its shape. Runs in ComfyUI's Python (numpy + PIL). No AI: background = light, colourless pixels connected to
 the image border (works for white sheets and for checkerboard 'transparency' painted into the picture).
 
@@ -10,17 +10,38 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageOps
 
-VERSION = '0.006'
+VERSION = '0.016'
 WORK_SIDE = 640                 # detection resolution (longest side)
 MIN_FIGURE_SHARE = 0.012        # figures smaller than this share of the sheet are labels/arrows/rulers
 MAX_FIGURES = 5
 SMALL_PIECE_SHARE = 0.0015       # letters / arrows / ruler ticks are smaller than this share of the sheet
 
 
+def background_rule(rgb):
+    """WHITE_TIP_CROP_FIX_V1 (0.016): white parts of the creature that touch the background (white tail tips, hat
+    pompoms) were flood-filled as background by the old rule (min channel >= 200), so the crop cut them off. A plain
+    sheet background is near pure white, so the threshold now follows the measured border brightness (at most 246).
+    Checkerboard 'transparency' borders (two light greys) keep the old rule."""
+    border = np.concatenate([rgb[0], rgb[-1], rgb[:, 0], rgb[:, -1]])
+    lo = border.min(1); spread = border.max(1) - lo
+    neutral = lo[(lo >= 200) & (spread <= 28)]
+    if len(neutral) < 0.5 * len(lo):
+        return 200, 28, 'old rule (border not light/neutral)'
+    med = float(np.median(neutral))
+    if np.mean((neutral < med - 8)) > 0.15:
+        return 200, 28, 'old rule (checkerboard-like border)'
+    thr = int(max(200, min(246, med - 8)))
+    return thr, 10, 'near-white border %.0f -> threshold %d' % (med, thr)
+
+
+BACKGROUND_RULE = {}
+
+
 def background(rgb):
     """Light, colourless pixels connected to the border (4-connected flood fill)."""
+    thr, spr, why = background_rule(rgb); BACKGROUND_RULE.update(threshold=thr, spread=spr, reason=why)
     lo = rgb.min(2); spread = rgb.max(2) - lo
-    light = (lo >= 200) & (spread <= 28)
+    light = (lo >= thr) & (spread <= spr)
     h, w = light.shape; bg = np.zeros((h, w), bool); q = deque()
     def seed(y, x):
         if light[y, x] and not bg[y, x]:
@@ -162,5 +183,5 @@ if __name__ == '__main__':
     for i, f in enumerate(figures):
         x0, y0, x1, y1 = f['bbox']; crop = full.crop((round(x0 * W), round(y0 * H), round(x1 * W), round(y1 * H)))
         crop.thumbnail((768, 768)); f['crop'] = 'figure-%d.png' % i; crop.save(out / f['crop'])
-    (out / 'figures.json').write_text(json.dumps({'version': VERSION, 'image_size': [W, H], 'figures': figures}, indent=1), encoding='utf-8')
+    (out / 'figures.json').write_text(json.dumps({'version': VERSION, 'image_size': [W, H], 'background_rule': BACKGROUND_RULE, 'figures': figures}, indent=1), encoding='utf-8')
     print('FIGURE_DETECTION_PASSED', json.dumps([(f['view'], [round(v, 3) for v in f['bbox']]) for f in figures]), flush=True)

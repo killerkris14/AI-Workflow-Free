@@ -1,4 +1,4 @@
-; AI Modeling Studio 0.010 - Windows installer (Smart / Full)
+; AI Modeling Studio 0.017 - Windows installer (Smart / Full)
 ; Build from the repo: installer\Build-Installer.bat (needs NSIS 3.x). Output goes to dist\.
 Unicode true
 SetCompressor /SOLID lzma
@@ -7,31 +7,31 @@ SetCompressorDictSize 8
 !include "nsDialogs.nsh"
 !include "LogicLib.nsh"
 
-Name "AI Modeling Studio 0.010"
+Name "AI Modeling Studio 0.017"
 !ifndef OUTDIR
   !define OUTDIR "..\dist"
 !endif
-OutFile "${OUTDIR}\AI-Modeling-Studio-0.010-Setup.exe"
+OutFile "${OUTDIR}\AI-Modeling-Studio-0.017-Setup.exe"
 InstallDir "C:\AI-Workflow-Auto"
 RequestExecutionLevel user
-BrandingText "AI Modeling Studio 0.010 (setup build 2026-10-28-3)"
-VIProductVersion "0.10.0.0"
+BrandingText "AI Modeling Studio 0.017 (setup build 2026-10-30-3)"
+VIProductVersion "0.17.0.0"
 VIAddVersionKey "ProductName" "AI Modeling Studio"
-VIAddVersionKey "FileVersion" "0.010"
+VIAddVersionKey "FileVersion" "0.017"
 VIAddVersionKey "FileDescription" "AI Modeling Studio installer (Smart / Full)"
 VIAddVersionKey "LegalCopyright" "kris"
 
 !define MUI_ICON "..\studio\ai_studio.ico"
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TITLE "AI Modeling Studio 0.010 setup"
-!define MUI_WELCOMEPAGE_TEXT "This installs AI Modeling Studio 0.010 and everything it needs:$\r$\n$\r$\n  - Python 3.15.1, Blender 5.2.2 + 3MF add-on$\r$\n  - ComfyUI portable 0.42.1 + portal node$\r$\n  - Hunyuan3D-2 (MV + single) and BiRefNet models$\r$\n  - optional: llama.cpp + Qwen models, Bambu Studio, AnythingLLM skill$\r$\n$\r$\nSmart install checks each one and installs only what is missing or wrong. Full install re-installs every requirement.$\r$\n$\r$\nYour jobs, source images, model files and settings are never deleted. Power the studio off before continuing."
+!define MUI_WELCOMEPAGE_TITLE "AI Modeling Studio 0.017 setup"
+!define MUI_WELCOMEPAGE_TEXT "This installs AI Modeling Studio 0.017 and everything it needs:$\r$\n$\r$\n  - Python 3.15.1, Blender 5.2.2 + 3MF add-on$\r$\n  - ComfyUI portable 0.42.1 + portal node$\r$\n  - Hunyuan3D-2 (MV + single) and BiRefNet models$\r$\n  - AI paint runtime (Hunyuan3D-2 paint, ~19 GB) + ffmpeg video reader$\r$\n  - optional: llama.cpp + Qwen models, Bambu Studio, AnythingLLM skill$\r$\n$\r$\nSmart install checks each one and installs only what is missing or wrong. Full install re-installs every requirement.$\r$\n$\r$\nYour jobs, source images, model files and settings are never deleted. Power the studio off before continuing."
 !define MUI_DIRECTORYPAGE_TEXT_TOP "Studio program folder. An existing installation here is updated in place (your settings and jobs are kept)."
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom OptionsPage OptionsLeave
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_FINISHPAGE_TITLE "Setup finished"
-!define MUI_FINISHPAGE_TEXT "The installer report (with a Copy all button) was shown at the end and saved in the studio logs folder.$\r$\n$\r$\nStart the studio with the AI Modeling Studio desktop icon. The header should read Version 0.010."
+!define MUI_FINISHPAGE_TEXT "The installer report (with a Copy all button) was shown at the end and saved in the studio logs folder.$\r$\n$\r$\nStart the studio with the AI Modeling Studio desktop icon. The header should read Version 0.017."
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_LANGUAGE "English"
 
@@ -121,7 +121,7 @@ FunctionEnd
 Section "Install"
   ; Payload is assembled from the repo layout (same structure the engine expects).
   SetOutPath "$PLUGINSDIR\payload\studio"
-  File /r /x __pycache__ /x *.pyc /x *.bak "..\studio\*.*"
+  File /r /x __pycache__ /x *.pyc /x *.bak /x test_color_coverage_011.py "..\studio\*.*"
   SetOutPath "$PLUGINSDIR\payload\custom_nodes"
   File /r /x __pycache__ /x *.pyc "..\comfyui\custom_nodes\*.*"
   SetOutPath "$PLUGINSDIR\payload\defaults"
@@ -129,6 +129,10 @@ Section "Install"
   SetOutPath "$PLUGINSDIR\payload"
   File "engine.ps1"
   File "payload_manifest.json"
+  SetOutPath "$PLUGINSDIR\payload\texture_paint"
+  File "texture_paint\*.*"
+  SetOutPath "$PLUGINSDIR\payload\test_assets"
+  File "test_assets\*.*"
   DetailPrint "Mode: $Mode   Models: $Models   Components:$Comps $DryArg"
   DetailPrint "The setup engine runs in its own window and shows a report with a Copy all button when it finishes."
   ; 64-bit PowerShell: this setup .exe is 32-bit, so $SYSDIR would be redirected to SysWOW64 (32-bit PowerShell).

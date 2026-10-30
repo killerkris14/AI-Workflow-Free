@@ -1,6 +1,6 @@
 @echo off
 setlocal
-rem Builds dist\AI-Modeling-Studio-0.010-Setup.exe from this repo (needs NSIS 3.x: https://nsis.sourceforge.io).
+rem Builds dist\AI-Modeling-Studio-0.017-Setup.exe from this repo (needs NSIS 3.x: https://nsis.sourceforge.io).
 cd /d "%~dp0"
 set "MAKENSIS="
 for %%M in (makensis.exe) do if not "%%~$PATH:M"=="" set "MAKENSIS=%%~$PATH:M"
@@ -14,6 +14,6 @@ if not exist "..\dist" mkdir "..\dist"
 "%MAKENSIS%" -V2 setup.nsi
 if errorlevel 1 ( echo BUILD FAILED. & pause & exit /b 1 )
 echo.
-echo Built: %~dp0..\dist\AI-Modeling-Studio-0.010-Setup.exe
-powershell -NoProfile -Command "(Get-FileHash '..\dist\AI-Modeling-Studio-0.010-Setup.exe' -Algorithm SHA256).Hash"
+echo Built: %~dp0..\dist\AI-Modeling-Studio-0.017-Setup.exe
+powershell -NoProfile -Command "(Get-FileHash '..\dist\AI-Modeling-Studio-0.017-Setup.exe' -Algorithm SHA256).Hash"
 pause

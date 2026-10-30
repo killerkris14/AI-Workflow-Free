@@ -1,5 +1,52 @@
 # Changelog
 
+## 0.017 (build 2026-10-30-3) - side-picture AI paint, props toggle, custom + recommended colour amount
+- MULTI_PICTURE_AI_PAINT_V1: AI paint now runs on the front picture AND the side picture. If the model is mirror-symmetric
+  (shape check: >= 90 % of the other side has a mirror partner within 1.5 mm) the side run is mirrored onto the other side
+  (no extra paint time); otherwise the other side gets its own run. Side run cached per colour version; a failed side run
+  falls back to front-only colours with a FAIL_REASON. Real job (9-colour mammoth 20261030-081752): mirrored 95.6 %,
+  match to the side picture 9.65 -> 7.13 deltaE. New: ai_paint_combine.py, ai_paint_side_prep.py.
+- PROPS_TOGGLE_V1: "Has props included" toggle in the uploader (holiday props are kept in the model and colour models);
+  Prompt Builder page updated to the new chat build.
+- CUSTOM_COLOUR_COUNT_V1 (b2): Custom button under 4 / 9 colours - choose 5, 6, 7 or 8 filaments.
+- COLOUR_ADVICE_V1 (b3): right after a picture is chosen the browser recommends a colour amount (nothing uploaded;
+  deltaE merge 14, colours >= 1 % count, +1 outline) and pre-selects it.
+- Setup .exe rebuilt for 0.017: also installs the AI paint runtime (uv, Python 3.12.15, torch 2.6.0+cu126, locked packages,
+  rasterizer wheel, Hunyuan3D-2 paint code + models, ~19 GB, needs 40 GB free) and ffmpeg 7.1; Bambu templates 6-9 and
+  archive_retention.json created only when missing; verify steps for every 0.015-0.017 self-test.
+- Updates for an existing 0.016 b5 install: updates/0.017/ (r2, then b2, then b3). Or run the 0.017 Setup .exe in Smart mode.
+- Status: INSTALLED and self-tests PASSED on GAMING-2026 (r2, b2, b3). Option C END-TO-END VERIFIED on the mammoth job.
+  Setup .exe: built (NSIS 3.09), payload hash-checked, engine simulated (dry run, install, re-run = 0 changes, edited template kept).
+  The .exe itself NOT VERIFIED on Windows yet.
+- Known open issue: a props job (job 20261030-141136) stopped in Blender solid repair - "Repair grid estimate is too large
+  (24836184 cells)" (limit 20,000,000 at voxel 0.4 mm). Not fixed in 0.017.
+
+## 0.016 (build 2026-10-29-1, builds b2-b5)
+- Studio shell (header, tabs, Prompt Builder), Bambu download = AI paint file only, white-tip crop fix, turntable video
+  upload (ffmpeg 7.1), archived jobs auto-deleted after 24 h. b2 black eyes, b3 AI paint download fix, b4 text clean-up +
+  4 or 9 colours, b5 Prompt Builder sync.
+
+## 0.015 (builds up to 2026-10-28-7)
+- AI paint (Hunyuan3D-2 texture paint) as the colour stage, unified 12-stage UI, AI paint defaults.
+
+## 0.012 - 0.014
+- Internal builds folded into 0.015 / 0.016. Note: the 0.011 colour-coverage update below was never installed; its
+  studio changes are superseded by 0.015+ (test_color_coverage_011.py is kept in the repo but not shipped).
+
+## 0.011 (build 2026-10-28-4) - more picture color + hidden-area fill
+- Fix (SELF_HIT_OCCLUSION_FIX_V1): the color-stage visibility test no longer counts a face as hidden by ITSELF
+  (non-planar quads: the sample point sat micrometres under its own surface). Real job 20261027-192542 (Christmas dragon):
+  colour straight from the pictures 29.6% -> 57.5% of the surface, same pictures/alignment/settings.
+- New Bambu export choice "Hidden areas" (HIDDEN_AREA_FILL_V1): fill from the nearest picture colour - all / 15 mm / 5 mm,
+  or only small gaps (1.5 mm, old behaviour). Filled areas are reported as INFERRED. Real job, fill "all": 0% left without colour
+  (57.5% picture, 9.1% mirror side, 33.4% inferred from neighbours).
+- Report fix: filled triangles that happened to get filament 1 were counted as "no reference colour".
+- Changed: hunyuan_color.py, bambu_color_export.py (export v0.007), hunyuan_color_bridge.py, hunyuan_color_ui.js, Rollback-Color-Update.bat.
+  New: test_color_coverage_011.py. Update: updates/0.011/Install-Update-0.011.bat (requires 0.010).
+- Installer source (installer/) bumped to 0.011; the Setup .exe in the repo root is still 0.010 until rebuilt.
+- Status: CHECKED + RUNTIME VERIFIED in the cloud (bpy 5.2.3 on the real job; update installer simulated: install, re-run, rollback,
+  failed-test rollback, edited-file stop). NOT VERIFIED on the PC yet.
+
 ## 0.010 Windows .exe installer (setup build 2026-10-28-3)
 - Fix: the setup engine ran in 32-bit PowerShell (the .exe is 32-bit, so System32 was redirected to SysWOW64).
   Result on GAMING-2026: false "NVIDIA driver NOT FOUND" (nvidia-smi is 64-bit only) and a false Bambu Studio failure

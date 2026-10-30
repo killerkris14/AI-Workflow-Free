@@ -9,6 +9,13 @@
 # AUTO_COLOR_AFTER_EXPORT_V1
 # JOB_PROGRESS_BAR_V1
 # GEOMETRY_CHECK_V1
+# AI_PAINT_STAGE_V1
+# STAGE_UNIFY_V1
+# AI_PAINT_DEFAULTS_V1
+# STUDIO_SHELL_V1
+# ARCHIVE_RETENTION_V1
+# AI_PAINT_RESULT_FIX_V1
+# COLOUR_COUNT_TOGGLE_V1
 """Native reference texture bridge v2.1; uses the existing queue and cancellation worker."""
 import ast,hashlib,json,math,re,shutil,subprocess,threading,time,uuid,urllib.parse,traceback
 from pathlib import Path
@@ -20,6 +27,8 @@ ACTIONS={'color_cancel', 'color_preview', 'color_prepare', 'color_approve_masks'
 ACTIVE={'previewing', 'preparing', 'exporting', 'aligning', 'cancelling'}
 PHASE={'preparing': 'color_prepare', 'mask_review': 'color_mask_approval', 'mask_approved': 'color_mask_approved', 'previewing': 'color_preview', 'preview_review': 'color_approval', 'exporting': 'color_export', 'cancelling': 'color_cancelling', 'failed': 'color_failed', 'complete': 'finished', 'cancelled': 'finished', 'idle': 'finished', 'aligning': 'color_align'}
 FILES={'alignment.json', 'reference_masks.npz', 'preview_top.png', 'failure.json', 'preview.png', 'model-colored.3mf', 'checks.json', 'model-colored.blend', 'reference_review.json', 'color.log', 'model-colored.glb', 'preview_side.png', 'model-bambu.3mf', 'bambu_report.txt', 'FAIL_REASON.txt', 'reference_masks_raw.npz'}
+# AI_PAINT_STAGE_V1: AI paint outputs (model-bambu-aipaint.3mf, previews, report, result, progress log)
+FILES|={'model-bambu-aipaint.3mf','aipaint_report.txt','aipaint_result.json','ai_paint.log','aipaint_front.png','aipaint_left.png','aipaint_right.png','aipaint_back.png','aipaint_texture.png'}
 def load(path):return json.loads(Path(path).read_text(encoding='utf-8-sig'))
 def save(path,value):
  p=Path(path);t=p.with_name(p.name+'.tmp');t.write_text(json.dumps(value,indent=2),encoding='utf-8');t.replace(p)
@@ -47,6 +56,87 @@ def bambu_template_filaments():
  with zipfile.ZipFile(p) as z:c=json.loads(z.read('Metadata/project_settings.config').decode('utf-8-sig')).get('filament_colour')
  if not isinstance(c,list) or not 1<=len(c)<=16:raise ValueError('Bambu template has no usable filament list')
  return len(c)
+
+# AI_PAINT_STAGE_V1: optional module; the studio works unchanged without it (picture method only).
+def ai_paint_stage():
+ import importlib,sys as _s
+ if str(ROOT) not in _s.path:_s.path.insert(0,str(ROOT))
+ return importlib.import_module('ai_paint_stage')
+# AI_PAINT_DEFAULTS_V1: unless "Custom AI paint settings" was ticked at upload, AI paint always uses these best settings
+AI_PAINT_BEST={'enabled':True,'filaments':4,'colours':'studio'}
+def ai_paint_custom(job):
+ try:return load(job/'request.json').get('ai_paint_custom') is True
+ except Exception:return False
+def ai_paint_best(job):
+ # COLOUR_COUNT_TOGGLE_V1 + CUSTOM_COLOUR_COUNT_V1: the upload form's 4 / 9 / custom 5-8 choice (request.json ai_paint_filaments); older jobs = 4
+ try:n=load(job/'request.json').get('ai_paint_filaments')
+ except Exception:n=None
+ return dict(AI_PAINT_BEST,filaments=n if type(n) is int and 4<=n<=9 else AI_PAINT_BEST['filaments'],**({'props':True} if has_props(job) else {}))
+# PROPS_TOGGLE_V1 (0.017): the upload form's "Has props included" toggle (request.json has_props); older jobs = no props
+def has_props(job):
+ try:return load(job/'request.json').get('has_props') is True
+ except Exception:return False
+def with_props(ap,job):
+ if ap and has_props(job):ap['props']=True   # from the upload only, never from the export box
+ elif ap:ap.pop('props',None)
+ return ap
+def ai_paint_info():
+ try:
+  m=ai_paint_stage();return {'install':m.install_status(ROOT),'filaments':m.template_counts(ROOT),'colours':list(m.COLOURS)}
+ except Exception as e:return {'install':{'installed':False,'problems':['AI paint module unavailable: '+str(e)]},'filaments':[],'colours':[]}
+def ai_paint_cancelled(job):
+ def check():
+  import job_cancel
+  try:st=load(job/'status.json')
+  except Exception:st={}
+  ctx=job_cancel.ACTIVE.get(job.name)
+  return bool(st.get('cancelled') or st.get('cancel_requested') or (ctx and ctx.event.is_set()))
+ return check
+
+# STAGE_UNIFY_V1 (AI UI Unifi 0.015): ONE 12-stage list for every Hunyuan job, computed here from the files the workers write.
+STAGES=['Queued','Image analysis & preparation','Checkpoint 1: approve images','Generating mesh','Mesh check & repair','Checkpoint 2: approve mesh','Mesh export','Colour: masks','Colour: alignment','Colour: texture preview','Colour: review & approve','Colour export + AI paint']
+COLOR_STAGE={'color_prepare':8,'color_mask_approval':8,'color_mask_approved':9,'color_align':9,'color_preview':10,'color_approval':11,'color_export':12}
+COLOR_PHASE={'preparing':8,'mask_review':8,'mask_approved':9,'aligning':9,'previewing':10,'preview_review':11,'exporting':12}
+GEOMETRY_STAGE={'prepare':2,'route_analyze':2,'route_review':3,'image_approval':3,'generate':4,'reprocess':5,'model_approval':6,'joint_design':6,'export':7}
+def color_reached(job,s):
+ # last colour stage a stopped/failed colour run had reached, from the files it left (never guessed beyond them)
+ try:folder=folder_for(job,s['version'])
+ except Exception:return 8
+ try:cfg=load(folder/'settings.json') if (folder/'settings.json').is_file() else {}
+ except Exception:cfg={}
+ if cfg.get('approved_preview_fingerprint'):return 12
+ if (folder/'checks.json').is_file():return 11
+ if cfg.get('reference_approval_fingerprint'):return 9
+ return 8
+def stage_info(job):
+ st=load(job/'status.json');state=st.get('state') or '';engine=st.get('engine') or ''
+ if (job/'request.json').is_file():engine=load(job/'request.json').get('engine',engine)
+ if engine!='hunyuan':return {'engine':engine or 'procedural'}
+ p=load(job/'hunyuan_progress.json') if (job/'hunyuan_progress.json').is_file() else {};ps=str(p.get('stage') or '')
+ s=None
+ if p.get('color_protocol')==2 and (job/'reference_color_state_v2.json').is_file():
+  try:s=current(job)
+  except Exception:s=None
+ phase=(s or {}).get('phase') if s and s.get('version')==p.get('color_version') else None
+ kind='running';index=1
+ if ps in COLOR_STAGE:index=COLOR_STAGE[ps]
+ elif phase in COLOR_PHASE:index=COLOR_PHASE[phase]
+ elif phase=='complete':index=12;kind='done'
+ elif phase in {'failed','cancelled','cancelling','color_failed'} or ps in {'color_failed','color_cancelling'}:index=color_reached(job,s);kind='stopped'
+ elif state=='QUEUED' and ps=='prepare' and not p.get('autoroute'):index=1
+ elif ps=='generate':index=5 if state=='RUNNING_BLENDER' else 4
+ elif ps in GEOMETRY_STAGE:index=GEOMETRY_STAGE[ps]
+ elif ps=='finished' or state=='SUCCEEDED':index=7;kind='done'
+ if state in {'FAILED','INTERRUPTED'} or st.get('cancelled'):kind='stopped'
+ elif state.startswith('WAITING_') and kind!='done':kind='waiting'
+ elif state=='QUEUED' and kind!='done':kind='queued'
+ elif state=='SUCCEEDED' and kind=='running' and not st.get('cancel_requested'):kind='waiting'
+ task=console_tail(job)
+ frac=(task.get('progress') or {}).get('percent') if kind=='running' and task.get('running') else None
+ done=index if kind=='done' else index-1
+ overall=100.0*(done+((frac or 0)/100.0 if kind=='running' else 0))/len(STAGES)
+ return {'engine':'hunyuan','stages':STAGES,'count':len(STAGES),'index':index,'title':STAGES[index-1],'kind':kind,'state':state,'stage':ps,'color_phase':phase,
+         'overall_percent':round(overall,1),'note':st.get('note') or '','error':st.get('error') or '','task':task}
 
 # JOB_AREA_LAYOUT_V1: last lines of the job's most recently written task log, for the live log box.
 def console_tail(job,count=5):
@@ -188,6 +278,22 @@ def extend(n):
      if b and (folder/'model-bambu.3mf').is_file() and (folder/'bambu_report.txt').is_file() and b.get('sha256')==digest(asset(folder,'model-bambu.3mf')) and b.get('report_sha256')==digest(asset(folder,'bambu_report.txt')):d['bambu']=b
      try:d['bambu_template_filaments']=bambu_template_filaments()
      except Exception as e:d['bambu_template_problem']=str(e)
+     # AI_PAINT_STAGE_V1
+     d['ai_paint_options']=ai_paint_info();d['ai_paint_custom']=ai_paint_custom(job);d['ai_paint_best']=ai_paint_best(job)
+     if s['phase']=='complete' and not d.get('source_changed'):
+      # AI_PAINT_RESULT_FIX_V1: the export stores the AI paint outcome in status.json 'checks' (state(...,checks=...)), not in
+      # final/checks.json, so the old read never found it and the page offered the picture-method file. Read status.json first;
+      # if that record is gone, the hash-verified aipaint_result.json of this colour version decides.
+      sc=d['status'].get('checks') if isinstance(d['status'].get('checks'),dict) else {}
+      a=next((c['ai_paint'] for c in (sc,checks) if isinstance(c.get('ai_paint'),dict) and c['ai_paint'].get('version')==s['version']),None)
+      if a is None and (folder/'aipaint_result.json').is_file():a={'ok':True,'version':s['version']}
+      if a:
+       d['ai_paint']={k:a.get(k) for k in ('ok','error','stage','fail_reason','cancelled','options')}
+       if a.get('ok'):
+        try:v_=ai_paint_stage().verified_result(folder)
+        except Exception as e:v_=None;d['ai_paint']['problem']=str(e)
+        if v_:d['ai_paint'].update(v_)
+        else:d['ai_paint'].update(ok=False,error='AI paint files changed or missing since they were made - export again')
    return d
  def idle(job):
   import job_cancel
@@ -249,6 +355,12 @@ def extend(n):
    shading=b.get('shading','keep')
    if shading not in {'keep','reduce'}:raise ValueError('Choose whether to keep or reduce drawn shading')
    cfg['bambu']={'filaments':count,'unobserved':policy,'min_region_mm2':float(region),'shading':shading}
+   # AI_PAINT_STAGE_V1: optional extra Bambu file painted by the AI (validated here, before anything is queued)
+   if ai_paint_custom(job):ap=with_props(ai_paint_stage().options(payload.get('ai_paint'),ROOT) if payload.get('ai_paint') is not None else None,job)
+   else:
+    info=ai_paint_info();best=ai_paint_best(job);ap=ai_paint_stage().options(best,ROOT) if info['install'].get('installed') and best['filaments'] in info['filaments'] else None
+   if ap:cfg['ai_paint']=ap
+   else:cfg.pop('ai_paint',None)
    if r['statistics']['fallback_faces'] and payload.get('accept_uncovered') is not True:raise ValueError('Accept neutral unobserved areas explicitly')
    cfg.update(approved_preview_fingerprint=r['preview_fingerprint'],accept_uncovered=payload.get('accept_uncovered') is True);return enqueue(job,s,'export',cfg)
  def run_task(task):
@@ -261,6 +373,23 @@ def extend(n):
    command=[cfg['blender_exe'],'--background','--factory-startup','--disable-autoexec','--python-exit-code','1','--python',str(ROOT/'hunyuan_color.py'),'--',str(folder),task.mode]
    with (folder/'color.log').open('w',encoding='utf-8') as log:r=subprocess.run(command,cwd=str(ROOT),stdout=log,stderr=subprocess.STDOUT,timeout=cfg.get('blender_timeout_seconds',900))
    if r.returncode:raise RuntimeError('Reference worker failed: '+(folder/'color.log').read_text(encoding='utf-8',errors='replace')[-9000:])
+   # AI_PAINT_STAGE_V1: picture-method export verified first; then the AI paint file (minutes; LOCK is not held meanwhile)
+   ai=None
+   if task.mode=='export':
+    econfig=load(folder/'settings.json')
+    if econfig.get('ai_paint'):
+     preview_check(folder,econfig,True)
+     with LOCK:
+      s=sync_cancel(job,current(job))
+      if not matches(s,task):return
+      state(job,'RUNNING_BLENDER',note='Picture-method Bambu file done. AI paint running (about 10-15 minutes; progress bar below).')
+     m=ai_paint_stage();ai={'version':task.version,'options':econfig['ai_paint']}
+     try:
+      res=m.run(ROOT,folder,econfig['ai_paint'],cfg['blender_exe'],ai_paint_cancelled(job),versions={'blender':cfg.get('blender_exe'),'studio_python':__import__('sys').version.split()[0]})
+      ai.update(ok=True,file='model-bambu-aipaint.3mf',sha256=res['files']['model-bambu-aipaint.3mf'],result_sha256=res['result_sha256'])
+     except m.Cancelled as e:ai.update(ok=False,cancelled=True,error=str(e))
+     except Exception as e:
+      ai.update(ok=False,error=(str(e).strip().splitlines() or [type(e).__name__])[0][:600],stage='AI paint',fail_reason=str(folder/'ai_paint_work'/'FAIL_REASON.txt'),traceback=traceback.format_exc()[-3000:])
    with LOCK:
     s=sync_cancel(job,current(job))
     if not matches(s,task):return
@@ -271,7 +400,13 @@ def extend(n):
      r=preview_check(folder,config,True)
      if config.get('approved_preview_fingerprint')!=s.get('preview_fingerprint') or r.get('preview_fingerprint')!=s.get('preview_fingerprint'):raise ValueError('Export approval changed')
      s=persist(job,s,'complete',task_nonce=None);note='Exported texture master and Bambu full-color project (model-bambu.3mf). Open it in Bambu Studio and confirm the painted colors before printing.'
-    checks=load(job/'final/checks.json');checks['color_workflow']=r;state(job,'SUCCEEDED' if task.mode=='export' else 'WAITING_MODEL_APPROVAL',checks=checks,error='',note=note)
+    checks=load(job/'final/checks.json');checks['color_workflow']=r;error=''
+    # AI_PAINT_STAGE_V1: the AI paint outcome is reported, never hidden; a failure leaves the picture-method file usable
+    if task.mode=='export':
+     checks['ai_paint']=ai
+     if ai and ai.get('ok'):note='Exported your Bambu full-color 3MF (AI paint). Open it in Bambu Studio and check the colours before printing.'
+     elif ai:error='AI paint FAILED: '+str(ai.get('error'))+' - see '+str(ai.get('fail_reason') or 'ai_paint_work')+'. The picture-method file model-bambu.3mf is still valid.'
+    state(job,'SUCCEEDED' if task.mode=='export' else 'WAITING_MODEL_APPROVAL',checks=checks,error=error,note=note)
     # AUTOMATIC_COLOR_RUN_V1: one click runs masks -> approval -> auto-align -> preview, then stops for final review.
     if s.get('auto_color') and task.mode=='prepare':
      config['reference_approval_fingerprint']=r['reference_fingerprint'];config['masks_auto_approved']=True;save(folder/'settings.json',config);s=persist(job,s,'mask_approved',reference_approved=True)
@@ -312,6 +447,10 @@ def extend(n):
   threading.Thread(target=run,daemon=True,name='auto-color-'+job.name).start()
  def install(main):
   previous_install(main);old=main['Handler'];previous_dispatch=main['process']
+  # ARCHIVE_RETENTION_V1: archived jobs are deleted after the time in archive_retention.json (default 24 h), logged in logs/
+  try:
+   import archive_retention;archive_retention.start(main)
+  except Exception as e:print('Archive auto-delete did not start: '+str(e),flush=True)
   def dispatch(job):
    if isinstance(job,ColorTask):return run_task(job)
    return previous_dispatch(job)
@@ -322,6 +461,8 @@ def extend(n):
      script=(ROOT/'hunyuan_color_ui.js').read_text(encoding='utf-8').replace('__ACCESS_TOKEN__',main['TOKEN']);content=(content.decode('utf-8') if isinstance(content,bytes) else content)+'<script>'+script+'</script>'
      layout=ROOT/'job_layout_ui.js'
      if layout.is_file():content+='<script>'+layout.read_text(encoding='utf-8').replace('__ACCESS_TOKEN__',main['TOKEN'])+'</script>'
+     shell=ROOT/'studio_shell_ui.js'   # STUDIO_SHELL_V1: header, page tabs, Prompt Builder, .3mf Repair (runs last)
+     if shell.is_file():content+='<script>'+shell.read_text(encoding='utf-8')+'</script>'
     return super().reply(code,content,kind)
    def do_GET(self):
     url=urllib.parse.urlsplit(self.path)
@@ -345,6 +486,7 @@ def extend(n):
        return self.reply(200,{'version':v.get('version'),'build':v.get('build'),'installed':v.get('installed')})
       if len(parts)==3 and parts[1]=='detail':return self.reply(200,details(main['get_job'](parts[2])))
       if len(parts)==3 and parts[1]=='console':return self.reply(200,console_tail(main['get_job'](parts[2])))
+      if len(parts)==3 and parts[1]=='stage':return self.reply(200,stage_info(main['get_job'](parts[2])))
       if len(parts)==4 and parts[1]=='prepared':
        job=main['get_job'](parts[2]);name=parts[3]
        if not re.fullmatch(r'(front|back|left|right|top|main)\.png',name):raise ValueError('Unknown prepared view')

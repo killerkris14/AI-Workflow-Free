@@ -1,3 +1,4 @@
+# VIDEO_VIEWS_V1
 # SOLID MESH REVIEW RECOVERY v1
 # ON-DEMAND COMFY LEASE v1
 """Hunyuan portal adapter: stdlib HTTP client and persistent human checkpoints."""
@@ -407,23 +408,60 @@ def positive_number(value,label,maximum=1000):
     if not math.isfinite(value) or not 1<=value<=maximum:raise ValueError(label+' must be between 1 and '+str(maximum)+'.')
     return value
 
+# VIDEO_VIEWS_V1 (0.016): a turntable video becomes a 4-view reference sheet (video_views.py, ComfyUI Python + ffmpeg)
+VIDEO_EXT={'.mp4','.mov','.webm','.avi','.mkv','.m4v'}
+def ffmpeg_exe():
+    p=os.environ.get('AISTUDIO_FFMPEG') or str(ROOT/'tools'/'ffmpeg'/('ffmpeg.exe' if os.name=='nt' else 'ffmpeg'))
+    if not Path(p).is_file():raise ValueError('The video reader is missing ('+p+'). Reinstall update 0.016.')
+    return p
+def comfy_python():
+    if os.environ.get('AISTUDIO_COMFY_PYTHON'):return os.environ['AISTUDIO_COMFY_PYTHON']
+    root=Path(cfg()['comfy_root']);root=root/'ComfyUI' if (root/'ComfyUI'/'main.py').is_file() else root
+    for c in [root.parent/'python_embeded'/'python.exe',root.parent/'python_embedded'/'python.exe',root/'.venv'/'Scripts'/'python.exe',root/'venv'/'Scripts'/'python.exe']:
+        if c.is_file():return str(c)
+    raise ValueError('Cannot find the ComfyUI Python that analyses videos (comfy_root in hunyuan_settings.json).')
+def video_sheet(payload):
+    name=str(payload.get('video_name') or 'video.mp4');ext=Path(name).suffix.lower()
+    if ext not in VIDEO_EXT:raise ValueError('Video type '+(ext or '?')+' is not supported (mp4, mov, webm, avi, mkv, m4v).')
+    data=base64.b64decode(payload.get('video_base64',''),validate=True)
+    if not data:raise ValueError('The video is empty.')
+    if len(data)>200*1024*1024:raise ValueError('Video exceeds 200 MB.')
+    work=CONTEXT['JOBS']/('.video-'+uuid.uuid4().hex[:12]);work.mkdir();log_path=work/'video_views.log';ff=py=None
+    try:
+        src=work/('source'+ext);src.write_bytes(data);spec=work/'spec.json';ff=ffmpeg_exe();py=comfy_python()
+        save(spec,{'video':str(src),'ffmpeg':ff,'out_dir':str(work)})
+        with log_path.open('w',encoding='utf-8') as log:r=subprocess.run([py,str(ROOT/'video_views.py'),str(spec)],stdout=log,stderr=subprocess.STDOUT,timeout=900,creationflags=0x08000000 if os.name=='nt' else 0)
+        text=log_path.read_text(encoding='utf-8',errors='replace')
+        if r.returncode or not (work/'sheet.png').is_file() or 'VIDEO_VIEWS_PASSED' not in text:raise RuntimeError('Video analysis failed: '+(text.strip().splitlines() or ['no output'])[-1][-500:])
+        spec.unlink();src.unlink()   # the source video is not kept (no bloat); picked frames + video_views.json stay with the job
+        return (work/'sheet.png').read_bytes(),work
+    except Exception as error:
+        (ROOT/'logs').mkdir(exist_ok=True);fail=ROOT/'logs'/('video-'+time.strftime('%Y%m%d-%H%M%S')+'-FAIL_REASON.txt')
+        log_text=log_path.read_text(encoding='utf-8',errors='replace')[-6000:] if log_path.is_file() else ''
+        fail.write_text('AI MODELING STUDIO - VIDEO TO REFERENCE SHEET FAILED\nStage: video analysis (video_views.py %s)\nVideo: %s (%d bytes)\nffmpeg: %s\nComfyUI Python: %s\n\nERROR / TRACEBACK:\n%s\n\nANALYSIS LOG:\n%s\n\nNEXT DIAGNOSTIC STEP:\nCheck that the video shows ONE object turning once against a plain background. Send this file.\n'%(ROOT/'video_views.py',name,len(data),ff,py,traceback.format_exc(),log_text),encoding='utf-8')
+        shutil.rmtree(work,ignore_errors=True)
+        raise ValueError(str(error)+' Details: '+str(fail))
+
 def admit(payload,retry_req=None,retry_job=None):
     if not CONTEXT['config']().get('allow_generated_code_execution'):raise ValueError('Workflow processing is disabled in config.json.')
     if not payload.get('authorize_processing') and payload.get('authorize_generated_code') is not True:raise ValueError('Authorize mesh processing before submitting.')
+    video_dir=None
     if retry_req:
         req=copy.deepcopy(retry_req);image_data=(retry_job/req['image_file']).read_bytes();ext=Path(req['image_file']).suffix
     else:
         instructions=str(payload.get('instructions','')).strip()
         if len(instructions)>15000:raise ValueError('Instructions exceed 15,000 characters.')
-        image_data=base64.b64decode(payload.get('image_base64',''),validate=True)
+        if payload.get('video_base64'):image_data,video_dir=video_sheet(payload)  # VIDEO_VIEWS_V1
+        else:image_data=base64.b64decode(payload.get('image_base64',''),validate=True)
         ext='.png' if image_data.startswith(b'\x89PNG\r\n\x1a\n') else '.jpg' if image_data.startswith(b'\xff\xd8\xff') else ''
-        if not ext:raise ValueError('Choose a PNG or JPEG.')
-        req={'instructions':instructions,'parent_job':'','engine':'hunyuan','length_mm':positive_number(payload.get('length_mm',120),'Length'),'quality':payload.get('quality','standard'),'image_file':'reference'+ext}
+        if not ext:raise ValueError('Choose a PNG or JPEG image, or a turntable video.')
+        req={'instructions':instructions,'parent_job':'','engine':'hunyuan','length_mm':positive_number(payload.get('length_mm',120),'Length'),'quality':payload.get('quality','standard'),'image_file':'reference'+ext,'ai_paint_custom':payload.get('ai_paint_custom') is True,'ai_paint_filaments':(lambda n:n if type(n) is int and 4<=n<=9 else 4)(payload.get('ai_paint_filaments')),'has_props':payload.get('has_props') is True,'source':'video' if video_dir else 'image'}  # AI_PAINT_DEFAULTS_V1 + VIDEO_VIEWS_V1 + PROPS_TOGGLE_V1 + CUSTOM_COLOUR_COUNT_V1
     if len(image_data)>15*1024*1024:raise ValueError('Image exceeds 15 MB.')
     if req.get('quality') not in {'standard','high','ultra'}:raise ValueError('Unknown quality mode.')
     if retry_job:req['retry_of']=retry_job.name
     job_id=time.strftime('%Y%m%d-%H%M%S-')+uuid.uuid4().hex[:8];job=CONTEXT['JOBS']/job_id;job.mkdir()
     (job/req['image_file']).write_bytes(image_data);save(job/'request.json',req)
+    if video_dir:shutil.move(str(video_dir),str(job/'video_source'))
     save(job/'hunyuan_progress.json',{'stage':'prepare','candidate':1,'quality':req['quality'],'seed':990414131370839,'transform':{'length_mm':req['length_mm'],'rotate_x':0,'rotate_y':0,'rotate_z':0}})
     state(job,'QUEUED',instructions=req['instructions'],engine='hunyuan',retry_of=req.get('retry_of',''))
     CONTEXT['TASKS'].put(job);return {'id':job_id,'state':'QUEUED'}
@@ -600,7 +638,7 @@ def install(namespace):
             if not self.authorized():return self.reply(403,{'error':'Missing/invalid workflow key.'})
             try:
                 length=int(self.headers.get('Content-Length','0'))
-                if not 2<=length<=22*1024*1024:raise ValueError('Invalid request size.')
+                if not 2<=length<=(300 if self.path=='/hunyuan/start' else 22)*1024*1024:raise ValueError('Invalid request size (videos up to 200 MB).')  # VIDEO_VIEWS_V1
                 raw=self.rfile.read(length);payload=json.loads(raw)
                 with namespace['ARCHIVE_LOCK']:
                     if self.path=='/retry':
