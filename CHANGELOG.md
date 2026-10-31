@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.018 (build 2026-10-30-1) - 0.4 / 0.6 mm nozzle, automatic reviews, Advanced toggle, big green download
+- NOZZLE_OPTION_V1: "Nozzle (both H2C nozzles)" 0.4 / 0.6 toggle under "Output length along X (mm)" (0.6 default, last choice
+  remembered in the browser). 0.4 jobs use new bambu_template*_04.3mf copies built from Bambu's own presets (Bambu Lab H2C 0.4 nozzle,
+  0.20mm High Quality @BBL H2C, Generic PLA @BBL H2C 0.4 nozzle; same colours) and finer colour detail (specks 0.25 mm2, dark-to-outline
+  below 1.0 mm / 5 mm2; 0.6 unchanged 0.5 mm2 / 1.5 mm / 10 mm2). Builder: tools/nozzle-templates/.
+- AUTO_REVIEW_V1: model review approves itself when the geometry check passed against every picture, mesh checks passed and the solid
+  repair passed; colour review approves itself when every picture fits (IoU >= 0.70, none left out) and AI paint is ready. Otherwise the
+  review stays manual with the reasons in the status note. config.json "auto_approve_model" / "auto_approve_color": false switch it off.
+- ADVANCED_REVIEW_V1: "Advanced mesh and paint" toggle under Prepare image (off by default, not remembered) = manual reviews for that job.
+- "Download Bambu full-color 3MF (open in Bambu Studio)" is a big green button.
+- Changed: ai_paint_filaments.py, ai_paint_stage.py, hunyuan_bridge.py, hunyuan_color_bridge.py, hunyuan_color_ui.js, hunyuan_portal_ui.js.
+  New: bambu_template{_default,,_6,_7,_8,_9}_04.3mf, test_nozzle_018.py, test_auto_review_018.py.
+- Status: INSTALLED on GAMING-2026 2026-10-30 17:33 (all 15 installer tests passed). Colour auto-approval RUNTIME VERIFIED in the cloud
+  (real app.py + Blender on the mammoth job). NOT VERIFIED: model auto-approval inside a real mesh generation, a full new job, a 0.4 file
+  in Bambu Studio. Known limitation: the picture-method backup file (only when AI paint fails) still uses the 0.6 template.
+- Setup .exe rebuilt for 0.018 (payload 109 files hash-checked; engine simulated: dry run, install, re-run = 0 changes, edited template
+  kept). The .exe itself NOT VERIFIED on Windows.
+
 ## 0.017 (build 2026-10-30-3) - side-picture AI paint, props toggle, custom + recommended colour amount
 - MULTI_PICTURE_AI_PAINT_V1: AI paint now runs on the front picture AND the side picture. If the model is mirror-symmetric
   (shape check: >= 90 % of the other side has a mirror partner within 1.5 mm) the side run is mirrored onto the other side

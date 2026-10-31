@@ -87,27 +87,33 @@ def install_status(root):
             'how_to_install': '' if not problems else 'Run Test-AI-Texture-Paint.bat once (it installs the AI paint runtime into texture_paint).'}
 
 
-def template_counts(root):
-    return [k for k, v in sorted(TEMPLATES.items()) if (Path(root) / v).is_file() and not (Path(root) / v).is_symlink()]
+def template_name(n, nozzle=0.6):   # NOZZLE_OPTION_V1: 0.4 mm jobs use the *_04 copies (H2C 0.4 nozzle, 0.20mm High Quality)
+    return TEMPLATES[n][:-4] + '_04.3mf' if nozzle == 0.4 else TEMPLATES[n]
+
+
+def template_counts(root, nozzle=0.6):
+    return [k for k in sorted(TEMPLATES) if (Path(root) / template_name(k, nozzle)).is_file() and not (Path(root) / template_name(k, nozzle)).is_symlink()]
 
 
 def options(raw, root):
     """Validate the export box's ai_paint choice. None/disabled -> None (picture method only)."""
     if raw is None: return None
-    if not isinstance(raw, dict) or set(raw) - {'enabled', 'filaments', 'colours', 'props'}: raise ValueError('Invalid AI paint options')
+    if not isinstance(raw, dict) or set(raw) - {'enabled', 'filaments', 'colours', 'props', 'nozzle'}: raise ValueError('Invalid AI paint options')
     if raw.get('enabled') is not True:
         if raw.get('enabled') not in (False, None): raise ValueError('AI paint enabled must be true/false')
         return None
     n = raw.get('filaments', 4)
     if isinstance(n, bool) or not isinstance(n, int) or n not in TEMPLATES: raise ValueError('AI paint filaments must be 4-9')
-    if n not in template_counts(root): raise ValueError('No Bambu template with %d filaments (%s) in the studio folder' % (n, TEMPLATES[n]))
+    z = raw.get('nozzle', 0.6)                      # NOZZLE_OPTION_V1
+    if isinstance(z, bool) or z not in (0.4, 0.6): raise ValueError('AI paint nozzle must be 0.4 or 0.6')
+    if n not in template_counts(root, z): raise ValueError('No Bambu template with %d filaments (%s) in the studio folder' % (n, template_name(n, z)))
     c = raw.get('colours', 'studio')
     if c not in COLOURS: raise ValueError('AI paint colours must be studio, drawing or auto')
     st = install_status(root)
     if not st['installed']: raise ValueError('AI paint is not installed: ' + '; '.join(st['problems']))
     p = raw.get('props', False)                      # PROPS_TOGGLE_V1
     if not isinstance(p, bool): raise ValueError('AI paint props must be true/false')
-    return dict({'enabled': True, 'filaments': n, 'colours': c}, **({'props': True} if p else {}))   # key only when ticked
+    return dict({'enabled': True, 'filaments': n, 'colours': c}, **({'props': True} if p else {}), **({'nozzle': 0.4} if z == 0.4 else {}))   # keys only when set
 
 
 class Progress:
@@ -306,7 +312,8 @@ def run(root, folder, opts, blender, cancelled=lambda: False, versions=None):
     prog = Progress(folder / 'ai_paint.log'); stage = 'start'; info = {'options': opts, 'version': VERSION, 'build': BUILD}
     env = dict(os.environ, HF_HOME=str(P['hf']), HF_HUB_OFFLINE='1', TRANSFORMERS_OFFLINE='1', HF_HUB_DISABLE_TELEMETRY='1',
                PYTHONUTF8='1', PYTHONUNBUFFERED='1', PAINT_OFFLOAD='model', PAINT_TURN='0',
-               AIPAINT_PROPS='1' if opts.get('props') else '0')   # PROPS_TOGGLE_V1
+               AIPAINT_PROPS='1' if opts.get('props') else '0',   # PROPS_TOGGLE_V1
+               AIPAINT_NOZZLE='0.4' if opts.get('nozzle') == 0.4 else '0.6')   # NOZZLE_OPTION_V1
     env.pop('PYTHONHOME', None); env.pop('PYTHONPATH', None)
     blend = [blender, '--background', '--factory-startup', '--python-exit-code', '1', '--python']
     try:
@@ -357,6 +364,7 @@ def run(root, folder, opts, blender, cancelled=lambda: False, versions=None):
         if c or not fj.get('ok'): raise RuntimeError('filament step failed (exit %s): %s' % (c, lastline(fj.get('error')) or 'see step_3_filaments.txt'))
         f = [x for x in fj['files'] if 'file' in x][0]; info['filaments'] = {k: f.get(k) for k in ('mode', 'requested', 'filaments', 'template', 'palette', 'share_percent', 'deltaE_mean', 'thin_dark_to_outline_percent', 'verify')}
         info['style'] = fj.get('style'); info['props'] = {'has_props': bool(opts.get('props')), 'accents_to_outline': fj.get('accents_to_outline')}
+        info['nozzle'] = {'nozzle_mm': fj.get('nozzle_mm', 0.6), 'detail': fj.get('detail')}   # NOZZLE_OPTION_V1
         stage = 'previews'
         c = step('preview', blend + [root / 'ai_paint_preview.py', '--', root, prep, work], env, root, work / 'step_4_preview.txt', prog, 88, 99, cancelled, 'step 4/4 preview pictures (Blender)')
         if c: raise RuntimeError('preview pictures failed (exit %s) - see step_4_preview.txt' % c)
@@ -399,6 +407,9 @@ def report(info, versions=None):
     if f['mode'] == 'drawing':
         lines.append('Drawing colours: filament colours from your approved pictures; the last filament is the outline colour; thin dark areas moved to it: %s %% of the surface' % f.get('thin_dark_to_outline_percent'))
     pr = info.get('props') or {}
+    nz = info.get('nozzle') or {}; dt = nz.get('detail') or {}   # NOZZLE_OPTION_V1
+    lines.append('Nozzle: %s mm on both H2C nozzles (chosen at upload)%s; colour detail: specks under %s mm2 merged, dark areas narrower than %s mm or under %s mm2 printed in the outline colour' % (
+        nz.get('nozzle_mm', 0.6), ' - Bambu file: H2C 0.4 nozzle, 0.20mm High Quality, Generic PLA 0.4 nozzle' if nz.get('nozzle_mm') == 0.4 else '', dt.get('speck_mm2'), dt.get('line_width_mm'), dt.get('line_area_mm2')))
     lines += multi_report(info.get('multi'))
     lines.append('Props: %s' % ('HAS PROPS INCLUDED (ticked at upload) - small prop colours keep their own colour, nothing moved to the outline colour' if pr.get('has_props') else
                  'no props ticked at upload' + (' - small accents moved to the outline colour: %s' % ', '.join(a['colour'] for a in pr['accents_to_outline']) if pr.get('accents_to_outline') else '')))

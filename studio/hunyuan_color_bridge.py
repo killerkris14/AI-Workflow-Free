@@ -71,7 +71,11 @@ def ai_paint_best(job):
  # COLOUR_COUNT_TOGGLE_V1 + CUSTOM_COLOUR_COUNT_V1: the upload form's 4 / 9 / custom 5-8 choice (request.json ai_paint_filaments); older jobs = 4
  try:n=load(job/'request.json').get('ai_paint_filaments')
  except Exception:n=None
- return dict(AI_PAINT_BEST,filaments=n if type(n) is int and 4<=n<=9 else AI_PAINT_BEST['filaments'],**({'props':True} if has_props(job) else {}))
+ return dict(AI_PAINT_BEST,filaments=n if type(n) is int and 4<=n<=9 else AI_PAINT_BEST['filaments'],**({'props':True} if has_props(job) else {}),**({'nozzle':0.4} if nozzle_mm(job)==0.4 else {}))
+# NOZZLE_OPTION_V1 (0.018): the upload form's 0.4 / 0.6 mm toggle (request.json nozzle_mm); older jobs = 0.6
+def nozzle_mm(job):
+ try:return 0.4 if load(job/'request.json').get('nozzle_mm')==0.4 else 0.6
+ except Exception:return 0.6
 # PROPS_TOGGLE_V1 (0.017): the upload form's "Has props included" toggle (request.json has_props); older jobs = no props
 def has_props(job):
  try:return load(job/'request.json').get('has_props') is True
@@ -79,7 +83,42 @@ def has_props(job):
 def with_props(ap,job):
  if ap and has_props(job):ap['props']=True   # from the upload only, never from the export box
  elif ap:ap.pop('props',None)
+ if ap and nozzle_mm(job)==0.4:ap['nozzle']=0.4   # NOZZLE_OPTION_V1: from the upload only
+ elif ap:ap.pop('nozzle',None)
  return ap
+# AUTO_REVIEW_V1 (0.018): the colour review is approved automatically when the automatic preview fits; same export as the
+# one-click Export button with its defaults (all template filaments, unobserved -> main colour, specks 4 mm2, shading kept,
+# neutral areas accepted, AI paint with the upload's settings). Switch off with "auto_approve_color": false in config.json.
+AUTO_MIN_VIEW_IOU=0.70   # real jobs 2026-10-30: lowest view fit 0.81 (all approved by you); poor-fit exclusion in the worker is 0.30
+def auto_color_reasons(job,r,cfg):
+ if (cfg or {}).get('auto_approve_color',True) is False:return ['automatic approval is switched off (auto_approve_color in config.json)']
+ try:adv=load(Path(job)/'request.json').get('advanced_review') is True   # ADVANCED_REVIEW_V1: upload toggle
+ except Exception:adv=False
+ if adv:return ['"Advanced mesh and paint" was ticked at upload, so you review the colours yourself']
+ why=[]
+ if ai_paint_custom(job):why.append('custom AI paint settings were chosen at upload')
+ else:
+  try:
+   info=ai_paint_info();best=ai_paint_best(job)
+   if not info['install'].get('installed'):why.append('AI paint is not installed')
+   else:ai_paint_stage().options(best,ROOT)
+  except Exception as e:why.append('AI paint settings not usable: '+str(e))
+ ev=(r.get('alignment_evidence') or {}).get('views') or {};al={v.get('slot'):v for v in (r.get('alignment') or {}).get('views') or []}
+ if not ev and not al:why.append('no alignment evidence in the preview')
+ for slot in sorted(set(ev)|set(al)):
+  iou=(ev.get(slot) or {}).get('iou',(al.get(slot) or {}).get('proposed_iou'))
+  if iou is None or iou<AUTO_MIN_VIEW_IOU:why.append('the %s picture fits the model poorly (IoU %s, needs %.2f)'%(slot,'?' if iou is None else round(iou,2),AUTO_MIN_VIEW_IOU))
+  if (al.get(slot) or {}).get('poor_fit'):why.append('the %s picture was marked as a poor fit'%slot)
+ ex=(r.get('statistics') or {}).get('excluded_views') or {}
+ for slot,reason in sorted(ex.items()):why.append('the %s picture was left out of the colours (%s)'%(slot,reason))
+ try:bambu_template_filaments()
+ except Exception as e:why.append('Bambu template problem: '+str(e))
+ return why
+def auto_export_config(job,config,r):
+ ec=dict(config);ec['bambu']={'filaments':bambu_template_filaments(),'unobserved':'dominant','min_region_mm2':4.0,'shading':'keep'}
+ ec['ai_paint']=ai_paint_stage().options(ai_paint_best(job),ROOT)
+ ec.update(approved_preview_fingerprint=r['preview_fingerprint'],accept_uncovered=True,auto_review_color={'approved':True,'min_view_iou':AUTO_MIN_VIEW_IOU})
+ return ec
 def ai_paint_info():
  try:
   m=ai_paint_stage();return {'install':m.install_status(ROOT),'filaments':m.template_counts(ROOT),'colours':list(m.COLOURS)}
@@ -411,6 +450,14 @@ def extend(n):
     if s.get('auto_color') and task.mode=='prepare':
      config['reference_approval_fingerprint']=r['reference_fingerprint'];config['masks_auto_approved']=True;save(folder/'settings.json',config);s=persist(job,s,'mask_approved',reference_approved=True)
      config['settings']=normalize(config.get('settings',{'views':{}}),views(job),False);config.pop('approved_preview_fingerprint',None);config.pop('accept_uncovered',None);enqueue(job,s,'align',config,s['version'])
+    elif s.get('auto_color') and task.mode in {'align','preview'}:   # AUTO_REVIEW_V1
+     why=auto_color_reasons(job,r,cfg);ec=None
+     if not why:
+      try:ec=auto_export_config(job,config,r)
+      except Exception as e:why=['the automatic export could not be prepared: '+str(e)]
+     s=persist(job,s,auto_color=False)
+     if why:state(job,'WAITING_MODEL_APPROVAL',checks=checks,error='',note='Texture preview ready. Automatic approval stopped for your review: '+'; '.join(why)+'.')
+     else:enqueue(job,s,'export',ec);state(job,'QUEUED',error='',note='Colour review passed automatically (every picture fits the model). Exporting the Bambu file with AI paint.')
     elif s.get('auto_color'):persist(job,s,auto_color=False)
   except Exception:
    detail=traceback.format_exc()

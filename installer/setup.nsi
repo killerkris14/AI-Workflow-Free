@@ -1,4 +1,4 @@
-; AI Modeling Studio 0.017 - Windows installer (Smart / Full)
+; AI Modeling Studio 0.018 - Windows installer (Smart / Full)
 ; Build from the repo: installer\Build-Installer.bat (needs NSIS 3.x). Output goes to dist\.
 Unicode true
 SetCompressor /SOLID lzma
@@ -7,31 +7,31 @@ SetCompressorDictSize 8
 !include "nsDialogs.nsh"
 !include "LogicLib.nsh"
 
-Name "AI Modeling Studio 0.017"
+Name "AI Modeling Studio 0.018"
 !ifndef OUTDIR
   !define OUTDIR "..\dist"
 !endif
-OutFile "${OUTDIR}\AI-Modeling-Studio-0.017-Setup.exe"
+OutFile "${OUTDIR}\AI-Modeling-Studio-0.018-Setup.exe"
 InstallDir "C:\AI-Workflow-Auto"
 RequestExecutionLevel user
-BrandingText "AI Modeling Studio 0.017 (setup build 2026-10-30-3)"
-VIProductVersion "0.17.0.0"
+BrandingText "AI Modeling Studio 0.018 (setup build 2026-10-30-1)"
+VIProductVersion "0.18.0.0"
 VIAddVersionKey "ProductName" "AI Modeling Studio"
-VIAddVersionKey "FileVersion" "0.017"
+VIAddVersionKey "FileVersion" "0.018"
 VIAddVersionKey "FileDescription" "AI Modeling Studio installer (Smart / Full)"
 VIAddVersionKey "LegalCopyright" "kris"
 
 !define MUI_ICON "..\studio\ai_studio.ico"
 !define MUI_ABORTWARNING
-!define MUI_WELCOMEPAGE_TITLE "AI Modeling Studio 0.017 setup"
-!define MUI_WELCOMEPAGE_TEXT "This installs AI Modeling Studio 0.017 and everything it needs:$\r$\n$\r$\n  - Python 3.15.1, Blender 5.2.2 + 3MF add-on$\r$\n  - ComfyUI portable 0.42.1 + portal node$\r$\n  - Hunyuan3D-2 (MV + single) and BiRefNet models$\r$\n  - AI paint runtime (Hunyuan3D-2 paint, ~19 GB) + ffmpeg video reader$\r$\n  - optional: llama.cpp + Qwen models, Bambu Studio, AnythingLLM skill$\r$\n$\r$\nSmart install checks each one and installs only what is missing or wrong. Full install re-installs every requirement.$\r$\n$\r$\nYour jobs, source images, model files and settings are never deleted. Power the studio off before continuing."
+!define MUI_WELCOMEPAGE_TITLE "AI Modeling Studio 0.018 setup"
+!define MUI_WELCOMEPAGE_TEXT "This installs AI Modeling Studio 0.018 and everything it needs:$\r$\n$\r$\n  - Python 3.15.1, Blender 5.2.2 + 3MF add-on$\r$\n  - ComfyUI portable 0.42.1 + portal node$\r$\n  - Hunyuan3D-2 (MV + single) and BiRefNet models$\r$\n  - AI paint runtime (Hunyuan3D-2 paint, ~19 GB) + ffmpeg video reader$\r$\n  - optional: llama.cpp + Qwen models, Bambu Studio, AnythingLLM skill$\r$\n$\r$\nSmart install checks each one and installs only what is missing or wrong. Full install re-installs every requirement.$\r$\n$\r$\nYour jobs, source images, model files and settings are never deleted. Power the studio off before continuing."
 !define MUI_DIRECTORYPAGE_TEXT_TOP "Studio program folder. An existing installation here is updated in place (your settings and jobs are kept)."
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_DIRECTORY
 Page custom OptionsPage OptionsLeave
 !insertmacro MUI_PAGE_INSTFILES
 !define MUI_FINISHPAGE_TITLE "Setup finished"
-!define MUI_FINISHPAGE_TEXT "The installer report (with a Copy all button) was shown at the end and saved in the studio logs folder.$\r$\n$\r$\nStart the studio with the AI Modeling Studio desktop icon. The header should read Version 0.017."
+!define MUI_FINISHPAGE_TEXT "The installer report (with a Copy all button) was shown at the end and saved in the studio logs folder.$\r$\n$\r$\nStart the studio with the AI Modeling Studio desktop icon. The header should read Version 0.018."
 !insertmacro MUI_PAGE_FINISH
 !insertmacro MUI_LANGUAGE "English"
 

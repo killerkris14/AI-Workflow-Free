@@ -196,6 +196,10 @@ def _process_without_service_manager(job):
             progress['stage'] = 'model_approval'
             save(job / 'hunyuan_progress.json', progress)
             note = 'Checkpoint 2: compare the generated shape with the reference before export.' + (' ' + report['auto_repair']['note'] if report.get('auto_repair') else '') + (' ' + report['geometry_check_note'] if report.get('geometry_check_note') else '')
+            reasons = auto_model_reasons(job, progress, report)   # AUTO_REVIEW_V1
+            if not reasons:
+                return auto_model_export(job, progress, report)
+            note += ' Automatic approval stopped for your review: ' + '; '.join(reasons) + '.'
             state(job, 'WAITING_MODEL_APPROVAL', attempt=int(progress['candidate']), checks=report, note=note)
             return
         if stage == 'reprocess':
@@ -403,6 +407,44 @@ def process(job):
     return _process_without_service_manager(job)
 
 
+# AUTO_REVIEW_V1 (0.018): the model review (checkpoint 2) is approved automatically when every check passed; it stays a manual
+# review when anything failed or could not run. Same export as pressing Export (or Export repaired solid) yourself.
+# Switch off with "auto_approve_model": false in config.json.
+def auto_model_reasons(job, progress, report):
+    reasons = []
+    if CONTEXT['config']().get('auto_approve_model', True) is False: return ['automatic approval is switched off (auto_approve_model in config.json)']
+    try: adv = load(Path(job) / 'request.json').get('advanced_review') is True   # ADVANCED_REVIEW_V1: upload toggle
+    except Exception: adv = False
+    if adv: return ['"Advanced mesh and paint" was ticked at upload, so you review the model yourself']
+    if progress.get('result_type', 'solid') != 'solid': reasons.append('articulation was requested (joint design is always manual)')
+    if report.get('ok') is not True: reasons.append('the mesh checks did not pass')
+    if (report.get('auto_repair') or {}).get('applied') is False: reasons.append('the automatic solid repair failed')
+    voxel = (progress.get('transform') or {}).get('repair_voxel_mm')
+    if voxel:
+        rep = report.get('repair') or {}
+        if not rep.get('applied') or not rep.get('passed_topology_checks') or abs(float(rep.get('voxel_mm', -1)) - float(voxel)) > 1e-9: reasons.append('the repaired solid did not pass the topology checks')
+    if not CONTEXT['config']().get('geometry_check', True): reasons.append('the geometry check is switched off, so nothing compared the shape with your pictures')
+    else:
+        tries = [t for t in progress.get('geometry_tries') or [] if t.get('candidate') == progress.get('candidate')]
+        if not tries: reasons.append('the geometry check did not run (no checked reference views)')
+        elif tries[-1].get('error'): reasons.append('the geometry check could not run')
+        elif not tries[-1].get('passed'): reasons.append('the geometry check did not pass against every picture')
+    return reasons
+
+def auto_model_export(job, progress, report):
+    transform = progress.setdefault('transform', {}); transform['allow_mesh_warnings'] = False
+    if transform.get('repair_voxel_mm'): progress['result_type'] = 'solid'; progress['solid_repair_approved'] = True
+    tries = [t for t in progress.get('geometry_tries') or [] if t.get('candidate') == progress.get('candidate')]
+    progress['auto_review_model'] = {'approved': True, 'time': time.strftime('%Y-%m-%dT%H:%M:%S'), 'candidate': progress.get('candidate'),
+                                     'geometry_score': tries[-1].get('score') if tries else None, 'repair_voxel_mm': transform.get('repair_voxel_mm')}
+    progress['stage'] = 'export'; save(job / 'hunyuan_progress.json', progress)
+    state(job, 'QUEUED', attempt=int(progress.get('candidate', 1)), checks=report, error='', note='Model review passed automatically (geometry check passed, mesh checks passed). Exporting the model; colour starts by itself next.')
+    CONTEXT['TASKS'].put(job)
+    return
+
+def nozzle_choice(v):   # NOZZLE_OPTION_V1 (0.018): upload toggle, both H2C nozzles; missing = 0.6 (older pages)
+    if isinstance(v, bool) or v not in (0.4, 0.6): raise ValueError('Nozzle must be 0.4 or 0.6 mm.')
+    return 0.4 if v == 0.4 else 0.6
 def positive_number(value,label,maximum=1000):
     value=float(value)
     if not math.isfinite(value) or not 1<=value<=maximum:raise ValueError(label+' must be between 1 and '+str(maximum)+'.')
@@ -455,7 +497,7 @@ def admit(payload,retry_req=None,retry_job=None):
         else:image_data=base64.b64decode(payload.get('image_base64',''),validate=True)
         ext='.png' if image_data.startswith(b'\x89PNG\r\n\x1a\n') else '.jpg' if image_data.startswith(b'\xff\xd8\xff') else ''
         if not ext:raise ValueError('Choose a PNG or JPEG image, or a turntable video.')
-        req={'instructions':instructions,'parent_job':'','engine':'hunyuan','length_mm':positive_number(payload.get('length_mm',120),'Length'),'quality':payload.get('quality','standard'),'image_file':'reference'+ext,'ai_paint_custom':payload.get('ai_paint_custom') is True,'ai_paint_filaments':(lambda n:n if type(n) is int and 4<=n<=9 else 4)(payload.get('ai_paint_filaments')),'has_props':payload.get('has_props') is True,'source':'video' if video_dir else 'image'}  # AI_PAINT_DEFAULTS_V1 + VIDEO_VIEWS_V1 + PROPS_TOGGLE_V1 + CUSTOM_COLOUR_COUNT_V1
+        req={'instructions':instructions,'parent_job':'','engine':'hunyuan','length_mm':positive_number(payload.get('length_mm',120),'Length'),'quality':payload.get('quality','standard'),'image_file':'reference'+ext,'ai_paint_custom':payload.get('ai_paint_custom') is True,'ai_paint_filaments':(lambda n:n if type(n) is int and 4<=n<=9 else 4)(payload.get('ai_paint_filaments')),'has_props':payload.get('has_props') is True,'nozzle_mm':nozzle_choice(payload.get('nozzle_mm',0.6)),'advanced_review':payload.get('advanced_review') is True,'source':'video' if video_dir else 'image'}  # AI_PAINT_DEFAULTS_V1 + VIDEO_VIEWS_V1 + PROPS_TOGGLE_V1 + CUSTOM_COLOUR_COUNT_V1
     if len(image_data)>15*1024*1024:raise ValueError('Image exceeds 15 MB.')
     if req.get('quality') not in {'standard','high','ultra'}:raise ValueError('Unknown quality mode.')
     if retry_job:req['retry_of']=retry_job.name

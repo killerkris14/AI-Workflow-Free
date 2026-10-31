@@ -7,11 +7,11 @@ param(
     [switch]$DryRun,
     [switch]$NoWindow
 )
-# AI Modeling Studio 0.017 installer engine (run by the .exe; also runnable by hand).
+# AI Modeling Studio 0.018 installer engine (run by the .exe; also runnable by hand).
 # Smart = check every requirement and install only what is missing or wrong (delta).
 # Full  = re-install every requirement. Jobs, source images, models and user settings are never deleted.
 $ErrorActionPreference = 'Stop'
-$VERSION = '0.017'; $BUILD = '2026-10-30-3'; $SETUP_BUILD = '2026-10-30-3'
+$VERSION = '0.018'; $BUILD = '2026-10-30-1'; $SETUP_BUILD = '2026-10-30-1'
 
 # 64-bit guard (setup 2026-10-28-3): a 32-bit PowerShell on 64-bit Windows sees SysWOW64 instead of System32
 # (no nvidia-smi), the 32-bit registry view (64-bit programs such as Bambu Studio look missing) and
@@ -110,7 +110,7 @@ function Download($url, $dest) {
     $curl = if ($IsWin) { Join-Path $env:SystemRoot 'System32\curl.exe' } else { 'curl' }
     Say ('    downloading ' + $url)
     for ($i = 1; $i -le 3; $i++) {
-        & $curl -L --fail --retry 5 --retry-delay 5 -C - -A 'AI-Modeling-Studio-Setup/0.017' -o $part $url
+        & $curl -L --fail --retry 5 --retry-delay 5 -C - -A 'AI-Modeling-Studio-Setup/0.018' -o $part $url
         if ($LASTEXITCODE -eq 0 -and (Test-Path $part)) { Move-Item -LiteralPath $part -Destination $dest -Force; return $true }
         Say ('    download attempt ' + $i + ' failed (curl exit ' + $LASTEXITCODE + ')') 'Yellow'
     }
@@ -302,7 +302,7 @@ if ($Want['llama']) {
 }
 
 # ---------------------------------------------------------------- 6. studio program files (always) + settings (only when missing)
-Step 'AI Modeling Studio 0.017 program files' @() {
+Step 'AI Modeling Studio 0.018 program files' @() {
     $src = Join-Path $Payload 'studio'; $man = Get-Content (Join-Path $Payload 'payload_manifest.json') -Raw | ConvertFrom-Json
     foreach ($f in $FOLDERS) { if (-not $DryRun) { New-Item -ItemType Directory -Force -Path (Join-Path $InstallDir $f) | Out-Null } }
     $backup = Join-Path $InstallDir ('backups\installer-' + $VERSION + '-' + $Stamp); $changed = 0; $kept = 0; $created = 0; $records = @()
@@ -352,7 +352,7 @@ Step 'AI Modeling Studio 0.017 program files' @() {
     }
     return ('' + $changed + ' program file(s) installed/updated, ' + $created + ' setting file(s) created, ' + $kept + ' existing setting file(s) kept unchanged' + $(if (@($records | Where-Object { $_.existed }).Count) { '; backup: ' + $backup } else { '' }))
 }
-Step 'Desktop shortcut' @('AI Modeling Studio 0.017 program files', 'Python 3.15.1') {
+Step 'Desktop shortcut' @('AI Modeling Studio 0.018 program files', 'Python 3.15.1') {
     if ($DryRun -or -not $IsWin) { return 'DRY: would create "AI Modeling Studio" on the desktop' }
     $lnk = Join-Path ([Environment]::GetFolderPath('Desktop')) 'AI Modeling Studio.lnk'
     $sh = New-Object -ComObject WScript.Shell; $s = $sh.CreateShortcut($lnk)
@@ -363,7 +363,7 @@ Step 'Desktop shortcut' @('AI Modeling Studio 0.017 program files', 'Python 3.15
 }
 
 # ---------------------------------------------------------------- 6b. video reader (ffmpeg 7.1, used for turntable video uploads)
-Step 'Video reader (ffmpeg 7.1)' @('AI Modeling Studio 0.017 program files') {
+Step 'Video reader (ffmpeg 7.1)' @('AI Modeling Studio 0.018 program files') {
     $dir = Join-Path $InstallDir 'tools\ffmpeg'; $exe = Join-Path $dir 'ffmpeg.exe'
     if ((Hash $exe) -eq $FF.ExeSha -and $Mode -eq 'Smart') { return 'already installed + verified' }
     $zip = Join-Path $Downloads 'ffmpeg-7.1-essentials_build.zip'
@@ -382,7 +382,7 @@ Step 'Video reader (ffmpeg 7.1)' @('AI Modeling Studio 0.017 program files') {
 # ---------------------------------------------------------------- 6c. AI paint runtime (texture_paint: Python 3.12 + torch 2.6 cu126 + Hunyuan3D-2 paint)
 # Same pins and folder layout as the working PC. Each part is skipped when its state\*.done marker exists (Smart), so an existing
 # runtime is not downloaded again. About 19 GB on a new PC. ComfyUI's Python is never touched.
-Step 'AI paint runtime (Hunyuan3D-2 paint, ~19 GB)' @('AI Modeling Studio 0.017 program files', 'Python 3.15.1') {
+Step 'AI paint runtime (Hunyuan3D-2 paint, ~19 GB)' @('AI Modeling Studio 0.018 program files', 'Python 3.15.1') {
     $root = Join-Path $InstallDir 'texture_paint'; $state = Join-Path $root 'state'; $dl = Join-Path $root 'downloads'; $scripts = Join-Path $root 'scripts'
     $uv = Join-Path $root 'tools\uv.exe'; $envDir = Join-Path $root 'env'; $tpPy = Join-Path $envDir 'Scripts\python.exe'
     $code = Join-Path $root 'code\Hunyuan3D-2'; $models = Join-Path $root 'models'
@@ -469,7 +469,7 @@ if ($Want['bambu']) {
     }
 }
 if ($Want['anythingllm']) {
-    Step 'AnythingLLM skill' @('AI Modeling Studio 0.017 program files') {
+    Step 'AnythingLLM skill' @('AI Modeling Studio 0.018 program files') {
         $app = Join-Path $env:LOCALAPPDATA 'Programs\AnythingLLM\AnythingLLM.exe'; $note = ''
         if (-not (Test-Path $app)) {
             if ($DryRun) { $note = ' (DRY: would install AnythingLLM with winget)' }
@@ -485,18 +485,18 @@ if ($Want['anythingllm']) {
 }
 
 # ---------------------------------------------------------------- 8. verification in the real runtimes
-Step 'Verify: Python syntax of studio files' @('AI Modeling Studio 0.017 program files', 'Python 3.15.1') {
+Step 'Verify: Python syntax of studio files' @('AI Modeling Studio 0.018 program files', 'Python 3.15.1') {
     if ($DryRun) { return 'DRY' }
     $f = Join-Path $Temp 'syntax.py'; WriteText $f "import ast,sys,pathlib`nbad=[]`nfor p in pathlib.Path(sys.argv[1]).glob('*.py*'):`n    try: ast.parse(p.read_text(encoding='utf-8-sig'),str(p))`n    except Exception as e: bad.append(p.name+': '+str(e))`nprint('\n'.join(bad) or 'SYNTAX_OK')`n"
     $r = Capture $PyExe ('-B "' + $f + '" "' + $InstallDir + '"'); if ($r.out -notmatch 'SYNTAX_OK') { throw $r.out.Trim() }; return 'all .py/.pyw files parse'
 }
-Step 'Verify: mirror check + retry rules (0.010 self-test)' @('AI Modeling Studio 0.017 program files', 'Python 3.15.1', 'ComfyUI portable 0.42.1') {
+Step 'Verify: mirror check + retry rules (0.010 self-test)' @('AI Modeling Studio 0.018 program files', 'Python 3.15.1', 'ComfyUI portable 0.42.1') {
     if ($DryRun) { return 'DRY' }
     $r = Capture $PyExe ('-B "' + (Join-Path $InstallDir 'test_view_mirror_010.py') + '" "' + $InstallDir + '"') 600
     if ($r.out -notmatch 'VIEW_MIRROR_SELFTEST_PASSED') { throw ($r.out.Trim() -split "`n" | Select-Object -Last 15) -join ' | ' }
     return (($r.out -split "`n" | Where-Object { $_ -match 'checks passed' }) -join '').Trim()
 }
-Step 'Verify: Blender self-test (color export, alignment, geometry check)' @('AI Modeling Studio 0.017 program files', 'Blender 5.2.2') {
+Step 'Verify: Blender self-test (color export, alignment, geometry check)' @('AI Modeling Studio 0.018 program files', 'Blender 5.2.2') {
     if ($DryRun) { return 'DRY' }
     $r = Capture $BlenderExe ('--background --factory-startup --python-exit-code 1 --python "' + (Join-Path $InstallDir 'selftest_color_update.py') + '" -- "' + $InstallDir + '"') 1500
     if ($r.out -notmatch 'COLOR_UPDATE_SELFTEST_PASSED') { throw (($r.out.Trim() -split "`n" | Select-Object -Last 15) -join ' | ') }
@@ -513,10 +513,12 @@ foreach ($t in @(
     @{ n = 'Verify: Prompt Builder'; f = 'test_prompt_builder_017.py'; a = ''; m = 'PROMPT_BUILDER_017_TEST_PASSED'; d = @() },
     @{ n = 'Verify: Has props included'; f = 'test_props_017.py'; a = (' "' + $TpPy + '"'); m = 'PROPS_017_TEST_PASSED'; d = @('AI paint runtime (Hunyuan3D-2 paint, ~19 GB)') },
     @{ n = 'Verify: side picture AI paint'; f = 'test_multi_017.py'; a = (' "' + $TpPy + '" "' + $BlenderExe + '"'); m = 'MULTI_017_TEST_PASSED'; d = @('AI paint runtime (Hunyuan3D-2 paint, ~19 GB)', 'Blender 5.2.2') },
+    @{ n = 'Verify: 0.4 / 0.6 nozzle'; f = 'test_nozzle_018.py'; a = (' "' + $TpPy + '"'); m = 'NOZZLE_018_TEST_PASSED'; d = @('AI paint runtime (Hunyuan3D-2 paint, ~19 GB)') },
+    @{ n = 'Verify: automatic model + colour review'; f = 'test_auto_review_018.py'; a = ''; m = 'AUTO_REVIEW_018_TEST_PASSED'; d = @('AI paint runtime (Hunyuan3D-2 paint, ~19 GB)') },
     @{ n = 'Verify: video upload, crop fix, archive auto-delete'; f = 'test_studio_016.py'; a = (' "' + (Join-Path $Payload 'test_assets\test_turntable.mp4') + '" "' + $EmbPy + '" "' + (Join-Path $InstallDir 'tools\ffmpeg\ffmpeg.exe') + '"'); m = 'STUDIO_016_TEST_PASSED'; d = @('Video reader (ffmpeg 7.1)', 'ComfyUI portable 0.42.1') }
 )) {
     $tt = $t
-    Step $tt.n (@('AI Modeling Studio 0.017 program files', 'Python 3.15.1') + $tt.d) {
+    Step $tt.n (@('AI Modeling Studio 0.018 program files', 'Python 3.15.1') + $tt.d) {
         if ($DryRun) { return 'DRY' }
         $r = Capture $PyExe ('-B "' + (Join-Path $InstallDir $tt.f) + '" "' + $InstallDir + '"' + $tt.a) 2400
         if ($r.out -notmatch $tt.m) { throw (($r.out.Trim() -split "`n" | Where-Object { $_ -match 'FAIL|Error|rror:' } | Select-Object -First 8) -join ' | ') }
@@ -532,7 +534,7 @@ $nFail = @($Script:Results | Where-Object { $_.Result -like 'FAILED*' -or $_.Res
 Say ''
 if ($DryRun) { Say 'RESULT: CHECK ONLY - nothing was changed. Lines starting with DRY show what an install would do; "already ..." lines are up to date.' 'Cyan' }
 elseif ($nFail) { Say ('RESULT: ' + $nFail + ' step(s) need attention. Each failure has a FAIL_REASON file in ' + $Temp + '. Run the installer again (Smart) after fixing.') 'Red' }
-else { Say 'RESULT: everything installed and verified. Start the studio with the "AI Modeling Studio" desktop icon; the header should read Version 0.017.' 'Green' }
+else { Say 'RESULT: everything installed and verified. Start the studio with the "AI Modeling Studio" desktop icon; the header should read Version 0.018.' 'Green' }
 Say 'Never deleted: jobs, source images, model files, your settings. Damaged model copies are renamed, not deleted.'
 $reportDir = if (Test-Path (Join-Path $InstallDir 'logs')) { Join-Path $InstallDir 'logs' } else { $Temp }
 $report = Join-Path $reportDir ('installer-report-' + $Stamp + '.txt'); WriteText $report ($Script:Log -join "`r`n"); Say ('Report: ' + $report)

@@ -15,8 +15,14 @@ PROPS = os.environ.get('AIPAINT_PROPS') == '1'
 ACCENT_MAX_FILAMENTS = 4
 ACCENT_MIN_SHARE = 0.01
 TEMPLATES = {4: 'bambu_template_default.3mf', 5: 'bambu_template.3mf', 6: 'bambu_template_6.3mf', 7: 'bambu_template_7.3mf', 8: 'bambu_template_8.3mf', 9: 'bambu_template_9.3mf'}
+# NOZZLE_OPTION_V1 (0.018): upload toggle 0.4 / 0.6 mm (both H2C nozzles). 0.4 -> the *_04 templates (H2C 0.4 nozzle, 0.20mm High Quality,
+# Generic PLA 0.4 nozzle) and finer colour detail: speck merge 0.5 -> 0.25 mm2, thin/tiny dark areas -> outline below 1.0 mm wide / 5 mm2
+# (0.6: 1.5 mm / 10 mm2). Unset or 0.6 = exactly the 0.017 behaviour.
+NOZZLE = '0.4' if os.environ.get('AIPAINT_NOZZLE') == '0.4' else '0.6'
+if NOZZLE == '0.4': TEMPLATES = {k: v[:-4] + '_04.3mf' for k, v in TEMPLATES.items()}
+DETAIL = {'0.6': {'speck_mm2': 0.5, 'line_width_mm': 1.5, 'line_area_mm2': 10.0}, '0.4': {'speck_mm2': 0.25, 'line_width_mm': 1.0, 'line_area_mm2': 5.0}}[NOZZLE]
 def prog(p, t): print('PROGRESS %d %s' % (p, t), flush=True)
-res = {'ok': False, 'files': []}
+res = {'ok': False, 'files': [], 'nozzle_mm': float(NOZZLE), 'detail': DETAIL}   # NOZZLE_OPTION_V1
 try:
     import numpy as np
     sys.path.insert(0, str(studio)); import bambu_color_export as B
@@ -85,7 +91,7 @@ try:
             flx = flx[keep_px]
         fil = np.where(accent, LINE, fil)          # accents (eyes) print in the outline colour
         res['accents_to_outline'] = dropped; res['props'] = PROPS
-        fil, _ = B.clean_regions(fil, T, area, 0.5)
+        fil, _ = B.clean_regions(fil, T, area, DETAIL['speck_mm2'])
         # thin or tiny DARK regions are outlines, whatever colour they were matched to (D2: lines back to black, antlers stay brown)
         comp = B._components(len(T), pairs, fil); nc = comp.max() + 1; border = fil[a_] != fil[b_]
         carea = np.bincount(comp, weights=area, minlength=nc)
@@ -93,7 +99,7 @@ try:
         width = 2 * carea / np.maximum(per, 1e-9)
         cl = np.bincount(comp, weights=area * tlab[:, 0], minlength=nc) / np.maximum(carea, 1e-12)
         clab = np.zeros(nc, int); clab[comp] = fil
-        to_line = (clab != LINE) & ((width < 1.5) | (carea < 10)) & (cl < 40)
+        to_line = (clab != LINE) & ((width < DETAIL['line_width_mm']) | (carea < DETAIL['line_area_mm2'])) & (cl < 40)
         moved = float(area[to_line[comp]].sum() / area.sum() * 100)
         fil = np.where(to_line[comp], LINE, fil)
         pal = [B.hex_color(B.lab_to_srgb(c[None])[0]) for c in P]
@@ -109,7 +115,7 @@ try:
     if mode == 'drawing':
         fil, pal, st = drawing_assign(COUNT)
     else:
-        fil, pal, st = B.quantize(rgb, obs, area, COUNT, 'dominant', 'distinct'); fil, cst = B.clean_regions(fil, T, area, 0.5)
+        fil, pal, st = B.quantize(rgb, obs, area, COUNT, 'dominant', 'distinct'); fil, cst = B.clean_regions(fil, T, area, DETAIL['speck_mm2'])
     prog(70, 'writing the Bambu 3MF')
     p = out / 'AI-PAINT.3mf'
     if p.exists(): p.unlink()

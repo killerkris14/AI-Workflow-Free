@@ -1,6 +1,6 @@
 {
- "version": "0.017",
- "build": "2026-10-30-3",
+ "version": "0.018",
+ "build": "2026-10-30-1",
  "files": [
   {
    "name": "ai_paint_combine.py",
@@ -8,7 +8,7 @@
   },
   {
    "name": "ai_paint_filaments.py",
-   "sha256": "ab713d45aaab3b38fd99682422da917e97b1649a1fdc1bb0420e234f3f5bf513"
+   "sha256": "c55136c6965d3ae763166f8f79ad848a03307018511045d12c2bd146b95de2ea"
   },
   {
    "name": "ai_paint_prep.py",
@@ -28,7 +28,7 @@
   },
   {
    "name": "ai_paint_stage.py",
-   "sha256": "fb20860ddabd0cdd07dd3fbb4882f672703522e4ecb68289ea463a7dedda83f6"
+   "sha256": "18ebe9a4ce800f691d06866be4ac63619abcb07c37f9f85a91519cf0a8ffd1b3"
   },
   {
    "name": "ai_service_manager.py",
@@ -140,7 +140,7 @@
   },
   {
    "name": "hunyuan_bridge.py",
-   "sha256": "aacf225efe30c54384631791f9a0745a0715a484dafc90a197b81f6244289ea3"
+   "sha256": "0ae649c5332a79251a0d717d18f8a8d5ec5ebba49d457973cd5c302de77da054"
   },
   {
    "name": "hunyuan_color.py",
@@ -148,15 +148,15 @@
   },
   {
    "name": "hunyuan_color_bridge.py",
-   "sha256": "3026d573627074f209fc7266db513d7902a78707d39bb3d8e460c3ed9289b5a9"
+   "sha256": "ab53d675d248ff3ca8342283717610ca6b7b7272833ee329dafba05bd015d0e5"
   },
   {
    "name": "hunyuan_color_ui.js",
-   "sha256": "34ddebc0a3aae06d0ce34b07d34e27642c095e99acce8379534c782799f0bfc0"
+   "sha256": "34346381b8127a0f79302a3bfc6fb7a87718569ba7140db44cc51e2e9991a53a"
   },
   {
    "name": "hunyuan_portal_ui.js",
-   "sha256": "f22672feb07ddb8fc1f5334bd5f1d7f78fb76f2f8a313e57711c565c2c28496c"
+   "sha256": "84f905dbcd1e65610b5ce3ab36dd4cda9a714043e1a7bb59db96dc7a1d976837"
   },
   {
    "name": "hunyuan_workflow_api.json",
@@ -405,6 +405,38 @@
   {
    "name": "visual_dashboard.html",
    "sha256": "51c40a2eec092d5decccdf66cd3944666eff9ad6c4eb518a7a62e2610e59606a"
+  },
+  {
+   "name": "bambu_template_04.3mf",
+   "sha256": "00b36d0ee7586536f9883559def3947bfeacc37faa84c50b4faf4dbb7536165d"
+  },
+  {
+   "name": "bambu_template_6_04.3mf",
+   "sha256": "4000595996a0f004fbc031be6355cec7593bb0ca54c7df7fe4709559b1080076"
+  },
+  {
+   "name": "bambu_template_7_04.3mf",
+   "sha256": "f08f6f3890ccbe4911b7b4a32ee7a48604d3c4bc1fff653bfcbb299902c73f69"
+  },
+  {
+   "name": "bambu_template_8_04.3mf",
+   "sha256": "c1d40fbe806f17ff23cc911117995316646ddeca94094cd62ac55ce6660cfbb0"
+  },
+  {
+   "name": "bambu_template_9_04.3mf",
+   "sha256": "1983f289883737cf467adb2facc80da4ce277eadf42d559a7add4b9d3d28fe8a"
+  },
+  {
+   "name": "bambu_template_default_04.3mf",
+   "sha256": "2161af0c7f9f08566567c056aa8e7e2b3f3c8a1c36b0b73f3206ac5b219426c0"
+  },
+  {
+   "name": "test_auto_review_018.py",
+   "sha256": "4d84169049eac2ec1431a8414609f8f14ac853fd979fa20bcdf8276e306f7ca0"
+  },
+  {
+   "name": "test_nozzle_018.py",
+   "sha256": "0cb9bdddff0b087b31015a743921e03729069d977d02cc109f39cbe92a19f245"
   }
  ]
 }
