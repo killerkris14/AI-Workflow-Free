@@ -5,9 +5,11 @@ Windows image-to-3D-print workflow: reference pictures -> background removal -> 
 Current version: **0.018 (build 2026-10-30-1)** - new PC: `AI-Modeling-Studio-0.018-Setup.exe`; existing 0.017 build 2026-10-30-3 install: `updates/0.018/Install-Update-0.018-Nozzle-And-Auto-Review.bat`
 
 ## Requirements (pinned)
+
+
 | Part | Version |
 |---|---|
-| Windows + NVIDIA GPU | driver 580+ |
+| Windows + NVIDIA GPU 3080 10Gb Card OR BETTER !!!| driver 580+ |
 | Python | 3.15.1 (Python install manager) |
 | Blender | 5.2.2 + ThreeMF_io extension |
 | ComfyUI portable | 0.42.1 (torch 2.14.0+cu130) |
